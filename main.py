@@ -11,6 +11,7 @@ window = pygame.display.set_mode((WIDTH, HEIGHT))
 GRID_SIZE = 40
 camera_x, camera_y = 0, 0
 zoom_level = 1
+running = True
 
 # Colors
 WHITE = (255, 255, 255)
@@ -28,43 +29,46 @@ def draw_grid():
 
     return grid_surface
 
-def main():
-    global camera_x, camera_y, zoom_level
+def process_events():
+    global camera_x, camera_y, zoom_level, running
 
-    running = True
+    keys = pygame.key.get_pressed()
+
+    if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+        camera_x -= 10
+    if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+        camera_x += 10
+    if keys[pygame.K_UP] or keys[pygame.K_w]:
+        camera_y -= 10
+    if keys[pygame.K_DOWN] or keys[pygame.K_s]:
+        camera_y += 10
+    if keys[pygame.K_PLUS] or keys[pygame.K_EQUALS]:
+        zoom_level = min(2, zoom_level + 0.1)
+    if keys[pygame.K_MINUS]:
+        zoom_level = max(0.5, zoom_level - 0.1)
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                print("run/pause")
+            if event.key == pygame.K_TAB:
+                print("step")
+
+def main():
     clock = pygame.time.Clock()
 
     while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
-                    camera_x -= 10
-                elif event.key == pygame.K_RIGHT:
-                    camera_x += 10
-                elif event.key == pygame.K_UP:
-                    camera_y -= 10
-                elif event.key == pygame.K_DOWN:
-                    camera_y += 10
-                elif event.key == pygame.K_PLUS or event.key == pygame.K_EQUALS:
-                    zoom_level = min(2, zoom_level + 0.1)
-                elif event.key == pygame.K_MINUS:
-                    zoom_level = max(0.5, zoom_level - 0.1)
+        process_events()
 
-        # Draw the grid
+
+
         grid_surface = draw_grid()
-
-        # Scale the grid surface
         scaled_surface = pygame.transform.scale(grid_surface, (int(WIDTH * zoom_level), int(HEIGHT * zoom_level)))
-
-        # Clear the window
         window.fill(WHITE)
+        window.blit(scaled_surface, (-camera_x, -camera_y)) # Apply camera translation
 
-        # Blit the scaled surface onto the window at the adjusted camera position
-        window.blit(scaled_surface, (-camera_x, -camera_y))
-
-        # Update the display
         pygame.display.flip()
         clock.tick(60)
 
