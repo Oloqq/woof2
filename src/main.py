@@ -17,11 +17,6 @@ zoom_level = 1
 running = True
 
 simulation = Simulation((40, 20))
-simulation.agents.extend([
-    Agent(0, 0),
-    Wolf(10, 0),
-    Deer(15, 0)
-    ])
 
 # Visualization
 WHITE = (255, 255, 255)
