@@ -9,3 +9,7 @@ class Agent:
 
     def step(self):
         self.x += 1
+
+    def move(self, dx, dy):
+        self.x = (self.x + dx) % self.sim.width
+        self.y = (self.y + dy) % self.sim.height

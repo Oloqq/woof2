@@ -11,5 +11,4 @@ class Deer(Agent):
     def step(self):
         dx = random.choice([-1, 0, 1])
         dy = random.choice([-1, 0, 1])
-        self.x = (self.x + dx) % self.sim.width
-        self.y = (self.y + dy) % self.sim.height
+        self.move(dx, dy)

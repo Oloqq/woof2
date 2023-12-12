@@ -6,6 +6,7 @@ class Simulation:
         self.height = world_size[1]
         self.agents: list[Agent] = []
         self.scent = [[0 for _ in range(self.height)] for _ in range(self.width)]
+        self.deathnote: list[Agent] = []
         self.reset()
 
     def reset(self):
@@ -22,3 +23,12 @@ class Simulation:
     def step(self):
         for agent in self.agents:
             agent.step()
+        for agent_to_kill in self.deathnote:
+            self.agents.remove(agent_to_kill)
+        self.deathnote = []
+
+    def get_cell_content(self, x, y) -> Agent|None:
+        for agent in self.agents:
+            if agent.x == x and agent.y == y:
+                return agent
+        return None

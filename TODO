@@ -6,5 +6,6 @@
   - sliders connected to simulation params
   - step button
 - implement resetting on demand
+- implement a grid for checking grid content
 
 simulation slow => refactor Simulation.agents into a hashmap
