@@ -1,6 +1,8 @@
 import pygame
 from .wolf_simulation import Simulation
 from .agent import Agent
+from .wolf import Wolf
+from .deer import Deer
 
 # Initialize pygame
 pygame.init()
@@ -15,7 +17,11 @@ zoom_level = 1
 running = True
 
 simulation = Simulation((40, 20))
-simulation.agents.append(Agent(0, 0))
+simulation.agents.extend([
+    Agent(0, 0),
+    Wolf(10, 0),
+    Deer(15, 0)
+    ])
 
 # Visualization
 WHITE = (255, 255, 255)
@@ -65,10 +71,12 @@ def draw_agents(surface: pygame.Surface, simulation: Simulation):
             case "abstract":
                 rect = pygame.Rect(agent.x * CELL_SIZE_PX, agent.y * CELL_SIZE_PX, CELL_SIZE_PX, CELL_SIZE_PX)
                 pygame.draw.rect(surface, (255, 0, 0), rect)
-            # case "wolf":
-            #     pass
-            # case "deer":
-            #     pass
+            case "wolf":
+                rect = pygame.Rect(agent.x * CELL_SIZE_PX, agent.y * CELL_SIZE_PX, CELL_SIZE_PX, CELL_SIZE_PX)
+                pygame.draw.rect(surface, (120, 120, 120), rect)
+            case "deer":
+                rect = pygame.Rect(agent.x * CELL_SIZE_PX, agent.y * CELL_SIZE_PX, CELL_SIZE_PX, CELL_SIZE_PX)
+                pygame.draw.rect(surface, (255, 255, 0), rect)
             case _:
                 raise NotImplementedError(f"can't display agent of kind {agent.kind}")
 

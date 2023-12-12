@@ -6,4 +6,4 @@ class Agent:
         self.y = y
 
     def step(self):
-        pass
+        self.x += 1

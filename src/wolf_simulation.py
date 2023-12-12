@@ -1,4 +1,6 @@
 from .agent import Agent
+from .wolf import Wolf
+from .deer import Deer
 
 class Simulation:
     def __init__(self, world_size):
