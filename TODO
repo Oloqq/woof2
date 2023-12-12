@@ -1,4 +1,9 @@
-- scent visualization
+- scent visualization (enable/disable with a boolean flag)
 - initialize Simulation in main to allow reading a config file
+- allow running simulation at set frames (steps) per second
+- allow running simulation at set amount of steps
+- draw ui
+  - sliders connected to simulation params
+  - step button
 
 simulation slow => refactor Simulation.agents into a hashmap

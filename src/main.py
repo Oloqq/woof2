@@ -61,17 +61,28 @@ def draw_grid(surface: pygame.Surface, simulation: Simulation):
 
 def draw_agents(surface: pygame.Surface, simulation: Simulation):
     for agent in simulation.agents:
-        rect = pygame.Rect(agent.x * CELL_SIZE_PX, agent.y * CELL_SIZE_PX, CELL_SIZE_PX, CELL_SIZE_PX)
-        pygame.draw.rect(surface, (255, 0, 0), rect)
+        match agent.kind:
+            case "abstract":
+                rect = pygame.Rect(agent.x * CELL_SIZE_PX, agent.y * CELL_SIZE_PX, CELL_SIZE_PX, CELL_SIZE_PX)
+                pygame.draw.rect(surface, (255, 0, 0), rect)
+            # case "wolf":
+            #     pass
+            # case "deer":
+            #     pass
+            case _:
+                raise NotImplementedError(f"can't display agent of kind {agent.kind}")
 
 def draw_world(simulation) -> pygame.Surface:
-    grid_surface = pygame.Surface((WIDTH, HEIGHT))
-    grid_surface.fill(WHITE)
+    surface = pygame.Surface((WIDTH, HEIGHT))
+    surface.fill(WHITE)
 
-    draw_grid(grid_surface, simulation) # draw on separate surface to turn grid off/on?
-    draw_agents(grid_surface, simulation)
+    draw_grid(surface, simulation)
+    draw_agents(surface, simulation)
 
-    return grid_surface
+    return surface
+
+def draw_ui() -> pygame.Surface:
+    raise NotImplementedError
 
 def main():
     clock = pygame.time.Clock()
