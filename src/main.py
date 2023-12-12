@@ -8,26 +8,22 @@ WIDTH, HEIGHT = 800, 600
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 
 # Grid and camera settings
-GRID_SIZE = 40
 camera_x, camera_y = 0, 0
 zoom_level = 1
 running = True
+GRID = (40, 20)
 
 # Colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
-def draw_grid():
-    # Create a surface for the grid (world)
-    grid_surface = pygame.Surface((WIDTH, HEIGHT))
-    grid_surface.fill(WHITE)
-
-    for x in range(0, WIDTH, GRID_SIZE):
-        for y in range(0, HEIGHT, GRID_SIZE):
-            rect = pygame.Rect(x, y, GRID_SIZE, GRID_SIZE)
-            pygame.draw.rect(grid_surface, BLACK, rect, 1)
-
-    return grid_surface
+def draw_grid(surface: pygame.Surface):
+    CELL_SIZE_PX = 40
+    for x in range(GRID[0]):
+        for y in range(GRID[1]):
+            rect = pygame.Rect(x * CELL_SIZE_PX, y * CELL_SIZE_PX, CELL_SIZE_PX, CELL_SIZE_PX)
+            pygame.draw.rect(surface, BLACK, rect, 1)
+    return surface
 
 def process_events():
     global camera_x, camera_y, zoom_level, running
@@ -56,22 +52,33 @@ def process_events():
             if event.key == pygame.K_TAB:
                 print("step")
 
+def draw_world() -> pygame.Surface:
+    grid_surface = pygame.Surface((WIDTH, HEIGHT))
+    grid_surface.fill(WHITE)
+
+    draw_grid(grid_surface)
+    # TODO draw agents
+
+    return grid_surface
+
 def main():
     clock = pygame.time.Clock()
+    # simulation = Simula
 
     while running:
         process_events()
 
+        # if should perform step then update the simulation
 
-
-        grid_surface = draw_grid()
-        scaled_surface = pygame.transform.scale(grid_surface, (int(WIDTH * zoom_level), int(HEIGHT * zoom_level)))
+        world_surface = draw_world()
+        scaled_surface = pygame.transform.scale(world_surface, (int(WIDTH * zoom_level), int(HEIGHT * zoom_level)))
         window.fill(WHITE)
-        window.blit(scaled_surface, (-camera_x, -camera_y)) # Apply camera translation
+        window.blit(scaled_surface, (-camera_x, -camera_y)) # Draw surface while applying camera translation
 
         pygame.display.flip()
         clock.tick(60)
 
     pygame.quit()
 
-main()
+if __name__ == "__main__":
+    main()
