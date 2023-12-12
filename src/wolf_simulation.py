@@ -15,9 +15,11 @@ class Simulation:
         from .deer import Deer
 
         self.agents.extend([
-            Agent(self, 0, 0),
+            # Agent(self, 0, 0),
             Wolf(self, 10, 0),
-            Deer(self, 15, 0)
+            Deer(self, 0, 0),
+            Deer(self, 9, 9),
+            Deer(self, 0, 2),
             ])
 
     def step(self):

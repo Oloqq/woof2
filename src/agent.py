@@ -8,7 +8,7 @@ class Agent:
         self.y = y
 
     def step(self):
-        self.x += 1
+        self.move(1, 0)
 
     def move(self, dx, dy):
         self.x = (self.x + dx) % self.sim.width

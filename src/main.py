@@ -17,7 +17,7 @@ camera_x, camera_y = 0, 0
 zoom_level = 1
 running = True
 
-simulation = Simulation((40, 20))
+simulation = Simulation((20, 10))
 
 # Visualization
 WHITE = (255, 255, 255)
@@ -79,8 +79,8 @@ def draw_agents(surface: pygame.Surface, simulation: Simulation):
             case _:
                 raise NotImplementedError(f"can't display agent of kind {agent.kind}")
 
-def draw_world(simulation) -> pygame.Surface:
-    surface = pygame.Surface((WIDTH, HEIGHT))
+def draw_world(simulation: Simulation) -> pygame.Surface:
+    surface = pygame.Surface((simulation.width * CELL_SIZE_PX, simulation.height * CELL_SIZE_PX))
     surface.fill(WHITE)
 
     draw_grid(surface, simulation)
@@ -144,7 +144,8 @@ def main():
         # if should perform step then update the simulation
 
         world_surface = draw_world(simulation)
-        scaled_surface = pygame.transform.scale(world_surface, (int(WIDTH * zoom_level), int(HEIGHT * zoom_level)))
+        sizex, sizey = world_surface.get_size()
+        scaled_surface = pygame.transform.scale(world_surface, (sizex * zoom_level, sizey * zoom_level))
         window.fill(WHITE)
         window.blit(scaled_surface, (-camera_x, -camera_y)) # Draw surface while applying camera translation
         manager.draw_ui(window)

@@ -29,8 +29,6 @@ class Wolf(Agent):
         elif nearest_deer_pos[1] < self.y:
             dy = -1
 
-        self.move(dx * self.speed, dy * self.speed)
-
         # Proposed new position
         new_x = (self.x + dx * self.speed) % self.sim.width
         new_y = (self.y + dy * self.speed) % self.sim.height
