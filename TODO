@@ -7,5 +7,8 @@
   - step button
 - implement resetting on demand
 - implement a grid for checking grid content
+-
 
-simulation slow => refactor Simulation.agents into a hashmap
+- if simulation slow
+  - refactor Simulation.agents into a hashmap
+  - refactor get cell content so agents are tracked on a grid while moving

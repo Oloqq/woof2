@@ -1,12 +1,8 @@
 import pygame
 import pygame_gui
+from .ui import manager, ui_elements
+from .drawing import draw_ground, draw_agents
 from .wolf_simulation import Simulation
-from .agent import Agent
-from .wolf import Wolf
-from .deer import Deer
-
-# Initialize pygame
-pygame.init()
 
 # Window settings
 WIDTH, HEIGHT = 1000, 600
@@ -18,12 +14,6 @@ zoom_level = 1
 running = True
 
 simulation = Simulation((20, 10))
-
-# Visualization
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-CELL_SIZE_PX = 40
-
 
 def move_camera():
     global camera_x, camera_y, zoom_level
@@ -46,93 +36,32 @@ def process_events():
     global running
 
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                print("run/pause")
-            if event.key == pygame.K_TAB:
-                simulation.step()
-        else:
-            ui_events(event)
+        match event.type:
+            case pygame.QUIT:
+                running = False
+            case pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    print("run/pause")
+                if event.key == pygame.K_TAB:
+                    simulation.step()
+            case pygame_gui.UI_BUTTON_PRESSED:
+                if event.ui_element == ui_elements["next_step_btn"]:
+                    simulation.step()
+                elif event.ui_element == ui_elements["run_sim_btn"]:
+                    print('run sim button pressed!')
+                elif event.ui_element == ui_elements["reset_sim_btn"]:
+                    print('reset sim button pressed!')
+            case pygame_gui.UI_HORIZONTAL_SLIDER_MOVED:
+                if event.ui_element == ui_elements["steps_ps_slider"]:
+                    print(event.value)
         manager.process_events(event)
-
-def draw_grid(surface: pygame.Surface, simulation: Simulation):
-    for x in range(simulation.width):
-        for y in range(simulation.height):
-            rect = pygame.Rect(x * CELL_SIZE_PX, y * CELL_SIZE_PX, CELL_SIZE_PX, CELL_SIZE_PX)
-            pygame.draw.rect(surface, BLACK, rect, 1)
-    return surface
-
-def draw_agents(surface: pygame.Surface, simulation: Simulation):
-    for agent in simulation.agents:
-        match agent.kind:
-            case "abstract":
-                rect = pygame.Rect(agent.x * CELL_SIZE_PX, agent.y * CELL_SIZE_PX, CELL_SIZE_PX, CELL_SIZE_PX)
-                pygame.draw.rect(surface, (255, 0, 0), rect)
-            case "wolf":
-                rect = pygame.Rect(agent.x * CELL_SIZE_PX, agent.y * CELL_SIZE_PX, CELL_SIZE_PX, CELL_SIZE_PX)
-                pygame.draw.rect(surface, (120, 120, 120), rect)
-            case "deer":
-                rect = pygame.Rect(agent.x * CELL_SIZE_PX, agent.y * CELL_SIZE_PX, CELL_SIZE_PX, CELL_SIZE_PX)
-                pygame.draw.rect(surface, (255, 255, 0), rect)
-            case _:
-                raise NotImplementedError(f"can't display agent of kind {agent.kind}")
-
-def draw_world(simulation: Simulation) -> pygame.Surface:
-    surface = pygame.Surface((simulation.width * CELL_SIZE_PX, simulation.height * CELL_SIZE_PX))
-    surface.fill(WHITE)
-
-    draw_grid(surface, simulation)
-    draw_agents(surface, simulation)
-
-    return surface
-
-def draw_ui() -> pygame.Surface:
-    manager = pygame_gui.UIManager((800, 600))
-    next_step_btn = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((10, 10), (200, 50)),
-                                                text='Next step',
-                                                manager=manager)
-    run_sim_btn = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((10, 70), (200, 50)),
-                                                text='Run simulation',
-                                                manager=manager)
-    reset_sim_btn = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((10, 130), (200, 50)),
-                                                text='Reset simulation',
-                                                manager=manager)
-    pygame_gui.elements.UITextBox(
-        html_text="Steps per second",
-        relative_rect=pygame.Rect(10, 190, 200, 30),
-        manager=manager)
-    steps_ps_slider = pygame_gui.elements.UIHorizontalSlider(relative_rect=pygame.Rect((10, 220), (200, 50))
-                                                             ,start_value=0.5, value_range=(0, 10),
-                                                             manager=manager)
-
-    elements = {
-        "next_step_btn": next_step_btn,
-        "steps_ps_slider": steps_ps_slider,
-        "run_sim_btn": run_sim_btn,
-        "reset_sim_btn": reset_sim_btn
-    }
-    return manager, elements
-
-def ui_events(event):
-    global ui_elements
-    if event.type == pygame_gui.UI_BUTTON_PRESSED:
-        if event.ui_element == ui_elements["next_step_btn"]:
-            simulation.step()
-        elif event.ui_element == ui_elements["run_sim_btn"]:
-            print('run sim button pressed!')
-        elif event.ui_element == ui_elements["reset_sim_btn"]:
-            print('reset sim button pressed!')
-    elif event.type == pygame_gui.UI_HORIZONTAL_SLIDER_MOVED:
-        if event.ui_element == ui_elements["steps_ps_slider"]:
-            print(event.value)
-
-
-manager, ui_elements = draw_ui()
 
 def main():
     clock = pygame.time.Clock()
+    ground_surface = draw_ground(simulation)
+    world_pixel_width, world_pixel_height = ground_surface.get_size()
+    def scaling_factor(zoom_level) -> tuple[float, float]:
+        return((world_pixel_width * zoom_level, world_pixel_height * zoom_level))
 
     while running:
         process_events()
@@ -143,11 +72,10 @@ def main():
 
         # if should perform step then update the simulation
 
-        world_surface = draw_world(simulation)
-        sizex, sizey = world_surface.get_size()
-        scaled_surface = pygame.transform.scale(world_surface, (sizex * zoom_level, sizey * zoom_level))
-        window.fill(WHITE)
-        window.blit(scaled_surface, (-camera_x, -camera_y)) # Draw surface while applying camera translation
+        window.fill((255, 255, 255))
+        for surface in (ground_surface, draw_agents(simulation)):
+            scaled_surface = pygame.transform.scale(surface, scaling_factor(zoom_level))
+            window.blit(scaled_surface, (-camera_x, -camera_y)) # Draw surface while applying camera translation
         manager.draw_ui(window)
         pygame.display.flip()
 
