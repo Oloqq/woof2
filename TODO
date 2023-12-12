@@ -1,0 +1,4 @@
+- scent visualization
+- initialize Simulation in main to allow reading a config file
+
+simulation slow => refactor Simulation.agents into a hashmap

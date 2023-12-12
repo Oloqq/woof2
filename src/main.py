@@ -1,4 +1,6 @@
 import pygame
+from .wolf_simulation import Simulation
+from .agent import Agent
 
 # Initialize pygame
 pygame.init()
@@ -11,23 +13,18 @@ window = pygame.display.set_mode((WIDTH, HEIGHT))
 camera_x, camera_y = 0, 0
 zoom_level = 1
 running = True
-GRID = (40, 20)
 
-# Colors
+simulation = Simulation((40, 20))
+simulation.agents.append(Agent(0, 0))
+
+# Visualization
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+CELL_SIZE_PX = 40
 
-def draw_grid(surface: pygame.Surface):
-    CELL_SIZE_PX = 40
-    for x in range(GRID[0]):
-        for y in range(GRID[1]):
-            rect = pygame.Rect(x * CELL_SIZE_PX, y * CELL_SIZE_PX, CELL_SIZE_PX, CELL_SIZE_PX)
-            pygame.draw.rect(surface, BLACK, rect, 1)
-    return surface
 
-def process_events():
-    global camera_x, camera_y, zoom_level, running
-
+def move_camera():
+    global camera_x, camera_y, zoom_level
     keys = pygame.key.get_pressed()
 
     if keys[pygame.K_LEFT] or keys[pygame.K_a]:
@@ -43,6 +40,9 @@ def process_events():
     if keys[pygame.K_MINUS]:
         zoom_level = max(0.5, zoom_level - 0.1)
 
+def process_events():
+    global running
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -50,27 +50,39 @@ def process_events():
             if event.key == pygame.K_SPACE:
                 print("run/pause")
             if event.key == pygame.K_TAB:
-                print("step")
+                simulation.step()
 
-def draw_world() -> pygame.Surface:
+def draw_grid(surface: pygame.Surface, simulation: Simulation):
+    for x in range(simulation.width):
+        for y in range(simulation.height):
+            rect = pygame.Rect(x * CELL_SIZE_PX, y * CELL_SIZE_PX, CELL_SIZE_PX, CELL_SIZE_PX)
+            pygame.draw.rect(surface, BLACK, rect, 1)
+    return surface
+
+def draw_agents(surface: pygame.Surface, simulation: Simulation):
+    for agent in simulation.agents:
+        rect = pygame.Rect(agent.x * CELL_SIZE_PX, agent.y * CELL_SIZE_PX, CELL_SIZE_PX, CELL_SIZE_PX)
+        pygame.draw.rect(surface, (255, 0, 0), rect)
+
+def draw_world(simulation) -> pygame.Surface:
     grid_surface = pygame.Surface((WIDTH, HEIGHT))
     grid_surface.fill(WHITE)
 
-    draw_grid(grid_surface)
-    # TODO draw agents
+    draw_grid(grid_surface, simulation) # draw on separate surface to turn grid off/on?
+    draw_agents(grid_surface, simulation)
 
     return grid_surface
 
 def main():
     clock = pygame.time.Clock()
-    # simulation = Simula
 
     while running:
         process_events()
+        move_camera()
 
         # if should perform step then update the simulation
 
-        world_surface = draw_world()
+        world_surface = draw_world(simulation)
         scaled_surface = pygame.transform.scale(world_surface, (int(WIDTH * zoom_level), int(HEIGHT * zoom_level)))
         window.fill(WHITE)
         window.blit(scaled_surface, (-camera_x, -camera_y)) # Draw surface while applying camera translation
