@@ -1,14 +1,5 @@
 from .agent import Agent
-from enum import Enum, auto
-
-class Terrain(Enum):
-    Grass = auto(),
-    Water = auto()
-
-class Cell:
-    def __init__(self):
-        self.scent = 0
-        self.terrain = Terrain.Grass
+from .cell import Cell, Terrain
 
 class Simulation:
     def __init__(self, world_size):
@@ -32,10 +23,10 @@ class Simulation:
 
         self.agents.extend([
             # Agent(self, 0, 0),
-            Wolf(self, 10, 0),
-            Deer(self, 0, 0),
-            Deer(self, 9, 9),
-            Deer(self, 0, 2),
+            Wolf(self, 10, 1),
+            Deer(self, 1, 1),
+            Deer(self, 8, 8),
+            Deer(self, 1, 2),
             ])
 
     def step(self):
