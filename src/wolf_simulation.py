@@ -3,6 +3,7 @@ from .wolf import Wolf
 from .deer import Deer
 from .cell import Cell, Terrain
 from .params import Params
+import random
 
 class Simulation:
     def __init__(self, world_size):
@@ -44,6 +45,12 @@ class Simulation:
         for agent_to_kill in self.deathnote:
             self.agents[agent_to_kill.kind].remove(agent_to_kill)
         self.deathnote = []
+
+        if len(self.agents[Deer.kind]) < Params.keep_deer_alive:
+            for i in range(Params.deer_herd_size):
+                x = random.randint(1, 9)
+                y = random.randint(1, 8)
+                self.agents[Deer.kind].append(Deer(self, x, y))
 
     def get_cell_content(self, x, y) -> Agent|None:
         for _, agents in self.agents.items():
