@@ -33,9 +33,13 @@ class Simulation:
             ])
 
     def step(self):
-        for _, agents in self.agents.items():
-            for agent in agents:
-                agent.step()
+        assert self.agents.keys() == set([Wolf.kind, Deer.kind])
+
+        for deer in self.agents[Deer.kind]:
+            deer.step()
+
+        for wolf in self.agents[Wolf.kind]:
+            wolf.step()
 
         for agent_to_kill in self.deathnote:
             self.agents[agent_to_kill.kind].remove(agent_to_kill)

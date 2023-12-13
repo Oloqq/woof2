@@ -12,24 +12,22 @@ class Wolf(Agent):
         self.speed = 1
 
     def step(self):
-        deer_positions = [
-            (agent.x, agent.y) for agent in self.sim.agents["deer"]
-        ]
-        if not deer_positions:
+        from .deer import Deer
+        if len(self.sim.agents[Deer.kind]) <= 0:
             print("no deer, wolf sad")
             return
 
-        nearest_deer_pos = min(deer_positions,
-            key=lambda deerpos: abs(self.x - deerpos[0]) + abs(self.y - deerpos[1]),
-        )
+        nearest_deer_i, nearest_deer = min(enumerate(self.sim.agents[Deer.kind]),
+            key=lambda i_deer: abs(self.x - i_deer[1].x) + abs(self.y - i_deer[1].y),
+            )
         dx = dy = 0
-        if nearest_deer_pos[0] > self.x:
+        if nearest_deer.x > self.x:
             dx = 1
-        elif nearest_deer_pos[0] < self.x:
+        elif nearest_deer.x < self.x:
             dx = -1
-        if nearest_deer_pos[1] > self.y:
+        if nearest_deer.y > self.y:
             dy = 1
-        elif nearest_deer_pos[1] < self.y:
+        elif nearest_deer.y < self.y:
             dy = -1
 
         # Proposed new position
