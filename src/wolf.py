@@ -1,5 +1,8 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from .wolf_simulation import Simulation
 from .agent import Agent
-from .wolf_simulation import Simulation
 
 class Wolf(Agent):
     kind: str = "wolf"
@@ -10,7 +13,7 @@ class Wolf(Agent):
 
     def step(self):
         deer_positions = [
-            (agent.x, agent.y) for agent in self.sim.agents if agent.kind == "deer"
+            (agent.x, agent.y) for agent in self.sim.agents["deer"]
         ]
         if not deer_positions:
             print("no deer, wolf sad")

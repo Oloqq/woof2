@@ -1,11 +1,17 @@
 from .agent import Agent
+from .wolf import Wolf
+from .deer import Deer
 from .cell import Cell, Terrain
+from .params import Params
 
 class Simulation:
     def __init__(self, world_size):
         self.width = world_size[0]
         self.height = world_size[1]
-        self.agents: list[Agent] = []
+        self.agents: dict[str, list[Agent]] = {
+            Deer.kind: [],
+            Wolf.kind: [],
+        }
         self.deathnote: list[Agent] = []
         self.grid: list[list[Cell]] = [[Cell() for _ in range(self.height)] for _ in range(self.width)]
         for x in range(self.width):
@@ -17,27 +23,27 @@ class Simulation:
         self.reset()
 
     def reset(self):
-        # local imports to avoid circular depenedncy
-        from .wolf import Wolf
-        from .deer import Deer
-
-        self.agents.extend([
-            # Agent(self, 0, 0),
-            Wolf(self, 10, 1),
+        self.agents[Deer.kind].extend([
             Deer(self, 1, 1),
             Deer(self, 8, 8),
             Deer(self, 1, 2),
             ])
+        self.agents[Wolf.kind].extend([
+            Wolf(self, 10, 1),
+            ])
 
     def step(self):
-        for agent in self.agents:
-            agent.step()
+        for _, agents in self.agents.items():
+            for agent in agents:
+                agent.step()
+
         for agent_to_kill in self.deathnote:
-            self.agents.remove(agent_to_kill)
+            self.agents[agent_to_kill.kind].remove(agent_to_kill)
         self.deathnote = []
 
     def get_cell_content(self, x, y) -> Agent|None:
-        for agent in self.agents:
-            if agent.x == x and agent.y == y:
-                return agent
+        for _, agents in self.agents.items():
+            for agent in agents:
+                if agent.x == x and agent.y == y:
+                    return agent
         return None

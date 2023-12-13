@@ -1,5 +1,9 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from .wolf_simulation import Simulation
+
 from .agent import Agent
-from .wolf_simulation import Simulation
 import random
 
 class Deer(Agent):
