@@ -24,6 +24,9 @@ class Simulation:
         for y in range(self.height):
             self.grid[0][y].terrain = Terrain.Water
             self.grid[self.width-1][y].terrain = Terrain.Water
+        for x in range(0, self.width, 10):
+            for y in range(0, self.height, 10):
+                self.grid[x][y].terrain = Terrain.Water
         self.reset()
 
     def reset(self):
