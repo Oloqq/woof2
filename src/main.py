@@ -3,17 +3,16 @@ import pygame_gui
 from .ui import manager, ui_elements
 from .drawing import draw_ground, draw_agents
 from .wolf_simulation import Simulation
+from .params import WINDOW_SIZE, Params
 
-# Window settings
-WIDTH, HEIGHT = 1000, 600
-window = pygame.display.set_mode((WIDTH, HEIGHT))
+window = pygame.display.set_mode(WINDOW_SIZE)
 
 # Grid and camera settings
 camera_x, camera_y = 0, 0
 zoom_level = 1
 running = True
 
-simulation = Simulation((50, 30))
+simulation = Simulation(Params.grid_size)
 
 def move_camera():
     global camera_x, camera_y, zoom_level

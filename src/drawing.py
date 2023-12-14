@@ -8,7 +8,7 @@ WHITE = (255, 255, 255)
 GRASS_COLOR = (0, 160, 0)
 WATER_COLOR = (0, 0, 160)
 GRID_COLOR = (0, 0, 0)
-CELL_SIZE_PX = 20
+CELL_SIZE_PX = 40
 
 def draw_ground(simulation: Simulation) -> pygame.Surface:
     surface = pygame.Surface((simulation.width * CELL_SIZE_PX, simulation.height * CELL_SIZE_PX))
