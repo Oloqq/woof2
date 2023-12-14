@@ -9,7 +9,7 @@ window = pygame.display.set_mode(WINDOW_SIZE)
 
 # Grid and camera settings
 camera_x, camera_y = 0, 0
-zoom_level = 1
+zoom_level = 0.5
 running = True
 
 simulation = Simulation(Params.grid_size)
@@ -71,11 +71,10 @@ def main():
 
         window.fill((255, 255, 255))
         for surface in (
-            draw_ground(simulation, (camera_x, camera_y)),
+            draw_ground(simulation, (camera_x, camera_y, zoom_level)),
             # draw_agents(simulation, (camera_x, camera_y)),
             ):
-            scaled_surface = pygame.transform.scale(surface, scaling_factor(zoom_level))
-            window.blit(scaled_surface, (0, 0)) # Draw surface while applying camera translation
+            window.blit(surface, (0, 0)) # Draw surface while applying camera translation
         manager.draw_ui(window)
         pygame.display.flip()
 
