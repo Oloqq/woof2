@@ -12,12 +12,12 @@ class Wolf(Agent):
         self.speed = 1
 
     def step(self):
-        from .deer import Deer
-        if len(self.sim.agents[Deer.kind]) <= 0:
+        deers = self.sim.get_deers()
+        if len(deers) <= 0:
             print("no deer, wolf sad")
             return
 
-        nearest_deer_i, nearest_deer = min(enumerate(self.sim.agents[Deer.kind]),
+        nearest_deer_i, nearest_deer = min(enumerate(deers),
             key=lambda i_deer: abs(self.x - i_deer[1].x) + abs(self.y - i_deer[1].y),
             )
         dx = dy = 0

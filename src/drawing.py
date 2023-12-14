@@ -2,12 +2,13 @@ import pygame
 from .wolf_simulation import Simulation, Terrain
 from .wolf import Wolf
 from .deer import Deer
+from .deer_herd import Herd
 
 WHITE = (255, 255, 255)
 GRASS_COLOR = (0, 160, 0)
 WATER_COLOR = (0, 0, 160)
 GRID_COLOR = (0, 0, 0)
-CELL_SIZE_PX = 40
+CELL_SIZE_PX = 20
 
 def draw_ground(simulation: Simulation) -> pygame.Surface:
     surface = pygame.Surface((simulation.width * CELL_SIZE_PX, simulation.height * CELL_SIZE_PX))
@@ -25,13 +26,14 @@ def draw_ground(simulation: Simulation) -> pygame.Surface:
 
 def draw_agents(simulation: Simulation) -> pygame.Surface:
     surface = pygame.Surface((simulation.width * CELL_SIZE_PX, simulation.height * CELL_SIZE_PX), pygame.SRCALPHA)
-    assert simulation.agents.keys() == set([Wolf.kind, Deer.kind])
+    assert simulation.agents.keys() == set([Wolf.kind])
+    assert simulation.agent_groups.keys() == set([Herd.kind])
     for agent in simulation.agents[Wolf.kind]:
         rect = pygame.Rect(agent.x * CELL_SIZE_PX, agent.y * CELL_SIZE_PX, CELL_SIZE_PX, CELL_SIZE_PX)
         pygame.draw.rect(surface, (100, 100, 100), rect)
 
-    for agent in simulation.agents[Deer.kind]:
-        rect = pygame.Rect(agent.x * CELL_SIZE_PX, agent.y * CELL_SIZE_PX, CELL_SIZE_PX, CELL_SIZE_PX)
+    for deer in simulation.get_deers():
+        rect = pygame.Rect(deer.x * CELL_SIZE_PX, deer.y * CELL_SIZE_PX, CELL_SIZE_PX, CELL_SIZE_PX)
         pygame.draw.rect(surface, (205, 133, 63), rect)
 
     return surface

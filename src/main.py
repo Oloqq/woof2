@@ -13,7 +13,7 @@ camera_x, camera_y = 0, 0
 zoom_level = 1
 running = True
 
-simulation = Simulation((20, 10))
+simulation = Simulation((50, 30))
 
 def move_camera():
     global camera_x, camera_y, zoom_level

@@ -1,3 +1,4 @@
 class Params:
-    deer_herd_size: int = 5
-    keep_deer_alive: int = 3
+    deer_herd_territory_length = 8
+    deer_herd_size: int = 20
+    min_herd_num: int = 2

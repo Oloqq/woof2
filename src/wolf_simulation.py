@@ -1,17 +1,20 @@
 from .agent import Agent
 from .wolf import Wolf
 from .deer import Deer
+from .agent_group import AgentGroup
+from .deer_herd import Herd
 from .cell import Cell, Terrain
 from .params import Params
-import random
 
 class Simulation:
     def __init__(self, world_size):
         self.width = world_size[0]
         self.height = world_size[1]
         self.agents: dict[str, list[Agent]] = {
-            Deer.kind: [],
-            Wolf.kind: [],
+            Wolf.kind: []
+        }
+        self.agent_groups: dict[str, list[AgentGroup]] = {
+            Herd.kind : []
         }
         self.deathnote: list[Agent] = []
         self.grid: list[list[Cell]] = [[Cell() for _ in range(self.height)] for _ in range(self.width)]
@@ -24,37 +27,41 @@ class Simulation:
         self.reset()
 
     def reset(self):
-        self.agents[Deer.kind].extend([
-            Deer(self, 1, 1),
-            Deer(self, 8, 8),
-            Deer(self, 1, 2),
+        self.agent_groups[Herd.kind].extend([
+            Herd(self, 10, 10),
+            Herd(self, 40, 20)
             ])
         self.agents[Wolf.kind].extend([
-            Wolf(self, 10, 1),
+            Wolf(self, 25, 15),
             ])
 
     def step(self):
-        assert self.agents.keys() == set([Wolf.kind, Deer.kind])
-
-        for deer in self.agents[Deer.kind]:
-            deer.step()
+        for herd in self.agent_groups[Herd.kind]:
+            herd.step()
 
         for wolf in self.agents[Wolf.kind]:
             wolf.step()
 
         for agent_to_kill in self.deathnote:
-            self.agents[agent_to_kill.kind].remove(agent_to_kill)
+            for herd in self.agent_groups[Herd.kind]:
+                herd.kill_deer(agent_to_kill)
         self.deathnote = []
 
-        if len(self.agents[Deer.kind]) < Params.keep_deer_alive:
-            for i in range(Params.deer_herd_size):
-                x = random.randint(1, 9)
-                y = random.randint(1, 8)
-                self.agents[Deer.kind].append(Deer(self, x, y))
+        # if len(self.agents[Deer.kind]) < Params.keep_deer_alive:
+        #     for _ in range(Params.deer_herd_size):
+        #         x = random.randint(1, self.width)
+        #         y = random.randint(1, self.height)
+        #         self.agents[Deer.kind].append(Deer(self, x, y))
 
     def get_cell_content(self, x, y) -> Agent|None:
         for _, agents in self.agents.items():
             for agent in agents:
                 if agent.x == x and agent.y == y:
                     return agent
+        for deer in self.get_deers():
+            if deer.x == x and deer.y == y:
+                    return deer
         return None
+
+    def get_deers(self) -> list[Deer]:
+        return [deer for horde in self.agent_groups[Herd.kind] for deer in horde.deers]

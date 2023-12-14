@@ -12,7 +12,5 @@ class Deer(Agent):
     def __init__(self, simulation: Simulation, x: int, y: int):
         super().__init__(simulation, x, y)
 
-    def step(self):
-        dx = random.choice([-1, 0, 1])
-        dy = random.choice([-1, 0, 1])
+    def step(self, dx, dy):
         self.move(dx, dy)
