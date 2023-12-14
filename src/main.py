@@ -1,35 +1,16 @@
 import pygame
 import pygame_gui
 from .ui import manager, ui_elements
-from .drawing import draw_ground, draw_agents
+from .drawing import draw_ground, draw_agents, Camera
 from .wolf_simulation import Simulation
 from .params import WINDOW_SIZE, Params
 
 window = pygame.display.set_mode(WINDOW_SIZE)
 
-# Grid and camera settings
-camera_x, camera_y = 0, 0
-zoom_level = 0.5
+camera = Camera(0, 0, 0.5)
 running = True
 
 simulation = Simulation(Params.grid_size)
-
-def move_camera():
-    global camera_x, camera_y, zoom_level
-    keys = pygame.key.get_pressed()
-
-    if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-        camera_x = max(camera_x - 10, 0)
-    if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-        camera_x += 10
-    if keys[pygame.K_UP] or keys[pygame.K_w]:
-        camera_y = max(camera_y - 10, 0)
-    if keys[pygame.K_DOWN] or keys[pygame.K_s]:
-        camera_y += 10
-    if keys[pygame.K_PLUS] or keys[pygame.K_EQUALS]:
-        zoom_level = min(2, zoom_level + 0.1)
-    if keys[pygame.K_MINUS]:
-        zoom_level = max(0.5, zoom_level - 0.1)
 
 def process_events():
     global running
@@ -57,12 +38,10 @@ def process_events():
 
 def main():
     clock = pygame.time.Clock()
-    def scaling_factor(zoom_level) -> tuple[float, float]:
-        return((WINDOW_SIZE[0] * zoom_level, WINDOW_SIZE[1] * zoom_level))
 
     while running:
         process_events()
-        move_camera()
+        camera.update()
 
         time_delta = clock.tick(60)/1000.0
         manager.update(time_delta)
@@ -71,8 +50,8 @@ def main():
 
         window.fill((255, 255, 255))
         for surface in (
-            draw_ground(simulation, (camera_x, camera_y, zoom_level)),
-            # draw_agents(simulation, (camera_x, camera_y)),
+            draw_ground(simulation, camera),
+            # draw_agents(simulation, camera),
             ):
             window.blit(surface, (0, 0)) # Draw surface while applying camera translation
         manager.draw_ui(window)

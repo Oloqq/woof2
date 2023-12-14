@@ -7,6 +7,7 @@ from .params import Params, WINDOW_SIZE
 from .wolf import Wolf
 from .deer import Deer
 from .deer_herd import Herd
+from .camera import Camera
 
 WHITE = (255, 255, 255)
 GRASS_COLOR = (0, 160, 0)
@@ -14,11 +15,11 @@ WATER_COLOR = (0, 0, 160)
 GRID_COLOR = (0, 0, 0)
 CELL_SIZE_PX = 40
 
-def draw_ground(simulation: Simulation, camera: tuple[float, float, float]) -> pygame.Surface:
+def draw_ground(simulation: Simulation, camera: Camera) -> pygame.Surface:
     surface = pygame.Surface(WINDOW_SIZE)
     surface.fill(WHITE)
 
-    cx, cy, scale = camera
+    cx, cy, scale = (camera.x, camera.y, camera.zoom)
     scaled_cell_size = CELL_SIZE_PX * scale
     cells_on_screen = (ceil(WINDOW_SIZE[0] / scaled_cell_size), ceil(WINDOW_SIZE[1] / scaled_cell_size))
     leftmost = max(0, floor(cx / scaled_cell_size))
