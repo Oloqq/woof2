@@ -19,11 +19,11 @@ def move_camera():
     keys = pygame.key.get_pressed()
 
     if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-        camera_x -= 10
+        camera_x = max(camera_x - 10, 0)
     if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
         camera_x += 10
     if keys[pygame.K_UP] or keys[pygame.K_w]:
-        camera_y -= 10
+        camera_y = max(camera_y - 10, 0)
     if keys[pygame.K_DOWN] or keys[pygame.K_s]:
         camera_y += 10
     if keys[pygame.K_PLUS] or keys[pygame.K_EQUALS]:
@@ -57,10 +57,8 @@ def process_events():
 
 def main():
     clock = pygame.time.Clock()
-    ground_surface = draw_ground(simulation)
-    world_pixel_width, world_pixel_height = ground_surface.get_size()
     def scaling_factor(zoom_level) -> tuple[float, float]:
-        return((world_pixel_width * zoom_level, world_pixel_height * zoom_level))
+        return((WINDOW_SIZE[0] * zoom_level, WINDOW_SIZE[1] * zoom_level))
 
     while running:
         process_events()
@@ -72,9 +70,12 @@ def main():
         # if should perform step then update the simulation
 
         window.fill((255, 255, 255))
-        for surface in (ground_surface, draw_agents(simulation)):
+        for surface in (
+            draw_ground(simulation, (camera_x, camera_y)),
+            # draw_agents(simulation, (camera_x, camera_y)),
+            ):
             scaled_surface = pygame.transform.scale(surface, scaling_factor(zoom_level))
-            window.blit(scaled_surface, (-camera_x, -camera_y)) # Draw surface while applying camera translation
+            window.blit(scaled_surface, (0, 0)) # Draw surface while applying camera translation
         manager.draw_ui(window)
         pygame.display.flip()
 

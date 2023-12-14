@@ -1,5 +1,8 @@
+from math import floor, ceil
+from tkinter.tix import CELL
 import pygame
 from .wolf_simulation import Simulation, Terrain
+from .params import Params, WINDOW_SIZE
 from .wolf import Wolf
 from .deer import Deer
 from .deer_herd import Herd
@@ -10,12 +13,18 @@ WATER_COLOR = (0, 0, 160)
 GRID_COLOR = (0, 0, 0)
 CELL_SIZE_PX = 40
 
-def draw_ground(simulation: Simulation) -> pygame.Surface:
-    surface = pygame.Surface((simulation.width * CELL_SIZE_PX, simulation.height * CELL_SIZE_PX))
+def draw_ground(simulation: Simulation, camera: tuple[float, float]) -> pygame.Surface:
+    surface = pygame.Surface(WINDOW_SIZE)
     surface.fill(WHITE)
-    for x in range(simulation.width):
-        for y in range(simulation.height):
-            rect = pygame.Rect(x * CELL_SIZE_PX, y * CELL_SIZE_PX, CELL_SIZE_PX, CELL_SIZE_PX)
+
+    cx, cy = camera # FIXME: assuming scale = 1
+    cells_on_screen = (ceil(WINDOW_SIZE[0] / CELL_SIZE_PX), ceil(WINDOW_SIZE[1] / CELL_SIZE_PX))
+    leftmost = max(0, floor(cx / CELL_SIZE_PX))
+    topmost  = max(0, floor(cy / CELL_SIZE_PX))
+
+    for ix, x in enumerate(range(leftmost, min(simulation.width, leftmost + cells_on_screen[0]))):
+        for iy, y in enumerate(range(topmost, min(simulation.height, topmost + cells_on_screen[1]))):
+            rect = pygame.Rect(ix * CELL_SIZE_PX, iy * CELL_SIZE_PX, CELL_SIZE_PX, CELL_SIZE_PX)
             match simulation.grid[x][y].terrain:
                 case Terrain.Grass:
                     pygame.draw.rect(surface, GRASS_COLOR, rect)
