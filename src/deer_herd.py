@@ -15,19 +15,17 @@ class Herd(AgentGroup):
 
         self.deers: list[Deer] = []
 
-        i = 0
-        for _ in range(Params.deer_herd_size):
-            deer_x = int(round(random.uniform(self.xmin, self.xmax)))
-            deer_y = int(round(random.uniform(self.ymin, self.ymax)))
+        deer_density = Params.deer_herd_size / (Params.deer_herd_territory_length ** 2)
+        for i in range(self.xmin, self.xmax + 1):
+            if(len(self.deers)) >= Params.deer_herd_size + 5:
+                break
+            for j in range(self.ymin, self.ymax + 1):
+                if(len(self.deers)) >= Params.deer_herd_size + 5:
+                    break
+                if random.uniform(0,1) <= deer_density:
+                    self.deers.append(Deer(sim, i, j))
 
-            while any(deer.x == x and deer.y == y for deer in self.deers):
-                deer_x = int(round(random.uniform(self.xmin, self.xmax)))
-                deer_y = int(round(random.uniform(self.ymin, self.ymax)))
-                i += 1
-                if i > 10000:
-                    return
-
-            self.deers.append(Deer(sim, deer_x, deer_y))
+        print(len(self.deers))
 
 
     def random_move(self):
@@ -51,6 +49,8 @@ class Herd(AgentGroup):
     def kill_deer(self, deer: Deer):
         if deer in self.deers:
             self.deers.remove(deer)
+        if(len(self.deers) == 0):
+            self.sim.agent_groups[self.kind].remove(self)
 
 
 
