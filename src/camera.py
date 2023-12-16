@@ -1,4 +1,9 @@
 import pygame
+from collections import namedtuple
+from .params import WINDOW_SIZE
+from math import ceil, floor
+
+View = namedtuple("View", "left top right bottom cell_size")
 
 class Camera:
     def __init__(self, x, y, zoom):
@@ -21,3 +26,12 @@ class Camera:
             self.zoom = min(2, self.zoom + 0.1)
         if keys[pygame.K_MINUS]:
             self.zoom = max(0.5, self.zoom - 0.1)
+
+    def visible_cells(self, original_size: int) -> View:
+        scaled_cell_size = original_size * self.zoom
+        cells_on_screen = (ceil(WINDOW_SIZE[0] / scaled_cell_size), ceil(WINDOW_SIZE[1] / scaled_cell_size))
+        left_bound = max(0, floor(self.x / scaled_cell_size))
+        top_bound  = max(0, floor(self.y / scaled_cell_size))
+        right_bound = left_bound + cells_on_screen[0]
+        bottom_bound = top_bound + cells_on_screen[1]
+        return View(left_bound, top_bound, right_bound, bottom_bound, scaled_cell_size)

@@ -18,12 +18,15 @@ class Simulation:
         }
         self.deathnote: list[Agent] = []
         self.grid: list[list[Cell]] = [[Cell() for _ in range(self.height)] for _ in range(self.width)]
+
+        # make the borders water
         for x in range(self.width):
             self.grid[x][0].terrain = Terrain.Water
             self.grid[x][self.height-1].terrain = Terrain.Water
         for y in range(self.height):
             self.grid[0][y].terrain = Terrain.Water
             self.grid[self.width-1][y].terrain = Terrain.Water
+        # create a pattern with water to track camera movement
         for x in range(0, self.width, 10):
             for y in range(0, self.height, 10):
                 self.grid[x][y].terrain = Terrain.Water
@@ -32,10 +35,12 @@ class Simulation:
     def reset(self):
         self.agent_groups[Herd.kind].extend([
             Herd(self, 10, 10),
-            Herd(self, 40, 20)
+            # Herd(self, 40, 20)
             ])
         self.agents[Wolf.kind].extend([
             Wolf(self, 25, 15),
+            Wolf(self, 25, 10),
+            Wolf(self, 25, 20),
             ])
 
     def step(self):

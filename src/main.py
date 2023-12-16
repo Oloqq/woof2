@@ -51,7 +51,7 @@ def main():
         window.fill((255, 255, 255))
         for surface in (
             draw_ground(simulation, camera),
-            # draw_agents(simulation, camera),
+            draw_agents(simulation, camera),
             ):
             window.blit(surface, (0, 0)) # Draw surface while applying camera translation
         manager.draw_ui(window)

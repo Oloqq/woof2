@@ -15,17 +15,19 @@ class Herd(AgentGroup):
 
         self.deers: list[Deer] = []
 
-        # print("tueu")
-        # for _ in range(Params.deer_herd_size):
-        #     deer_x = int(round(random.uniform(self.xmin, self.xmax)))
-        #     deer_y = int(round(random.uniform(self.ymin, self.ymax)))
+        i = 0
+        for _ in range(Params.deer_herd_size):
+            deer_x = int(round(random.uniform(self.xmin, self.xmax)))
+            deer_y = int(round(random.uniform(self.ymin, self.ymax)))
 
-        #     while any(deer.x == x and deer.y == y for deer in self.deers):
-        #         deer_x = int(round(random.uniform(self.xmin, self.xmax)))
-        #         deer_y = int(round(random.uniform(self.ymin, self.ymax)))
+            while any(deer.x == x and deer.y == y for deer in self.deers):
+                deer_x = int(round(random.uniform(self.xmin, self.xmax)))
+                deer_y = int(round(random.uniform(self.ymin, self.ymax)))
+                i += 1
+                if i > 10000:
+                    return
 
-        #     self.deers.append(Deer(sim, deer_x, deer_y))
-        # print("tuesafgu")
+            self.deers.append(Deer(sim, deer_x, deer_y))
 
 
     def random_move(self):
