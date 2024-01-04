@@ -2,6 +2,7 @@ from __future__ import annotations
 from .deer import Deer
 from .params import Params
 from .agent_group import AgentGroup
+from .cell import Terrain
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .wolf_simulation import Simulation
@@ -22,10 +23,9 @@ class Herd(AgentGroup):
             for j in range(self.ymin, self.ymax + 1):
                 if(len(self.deers)) >= Params.deer_herd_size + 5:
                     break
-                if random.uniform(0,1) <= deer_density:
-                    self.deers.append(Deer(sim, i, j))
-
-        print(len(self.deers))
+                if random.uniform(0,1) <= deer_density + 0.1:
+                    if not sim.grid[i][j].terrain == Terrain.Water:
+                        self.deers.append(Deer(sim, i, j))
 
 
     def random_move(self):

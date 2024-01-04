@@ -1,6 +1,3 @@
-from math import floor, ceil
-from tkinter.tix import CELL
-from turtle import left
 import pygame
 from .wolf_simulation import Simulation, Terrain
 from .params import Params, WINDOW_SIZE

@@ -6,6 +6,7 @@ from .deer_herd import Herd
 from .cell import Cell, Terrain
 from .params import Params
 import random
+import noise
 
 class Simulation:
     def __init__(self, world_size):
@@ -33,11 +34,49 @@ class Simulation:
         for y in range(self.height):
             self.grid[0][y].terrain = Terrain.Water
             self.grid[self.width-1][y].terrain = Terrain.Water
-        # create a pattern with water to track camera movement
-        for x in range(0, self.width, 10):
-            for y in range(0, self.height, 10):
-                self.grid[x][y].terrain = Terrain.Water
+        # generate water using Perlin noise
+        water_grid = self.generate_water(self.width, self.height)
+        for x in range(self.width):
+            for y in range(self.height):
+                if water_grid[x][y] == 1:
+                    self.grid[x][y].terrain = Terrain.Water
+
         self.reset()
+
+
+    def generate_water(self, width, height):
+            water_grid = [[0 for _ in range(height)] for _ in range(width)]
+            scale = 10  # Adjust the scale to control the water pattern
+            octaves = 1 # Adjust the number of octaves to control the level of detail
+            persistence = 0.4  # Adjust the persistence to control the roughness
+            threshold = 0.22  # Adjust the threshold to control the amount of water
+
+            for x in range(width):
+                for y in range(height):
+                    nx = x / width * scale
+                    ny = y / height * scale
+                    noise_value = noise.pnoise2(nx, ny, octaves=octaves, persistence=persistence)
+                    if noise_value > threshold:
+                        water_grid[x][y] = 1
+
+            for x in range(1, width - 1):
+                for y in range(1, height - 1):
+                    if (
+                        water_grid[x-1][y] == 1 and
+                        water_grid[x+1][y] == 1 and
+                        water_grid[x][y-1] == 1 and
+                        water_grid[x][y+1] == 1
+                    ):
+                        water_grid[x][y] = 1
+                    elif (
+                        water_grid[x-1][y] == 0 and
+                        water_grid[x+1][y] == 0 and
+                        water_grid[x][y-1] == 0 and
+                        water_grid[x][y+1] == 0
+                    ):
+                        water_grid[x][y] = 0
+
+            return water_grid
 
     def reset(self):
         for _ in range(Params.min_herd_num):
@@ -83,4 +122,4 @@ class Simulation:
         return None
 
     def get_deers(self) -> list[Deer]:
-        return [deer for horde in self.agent_groups[Herd.kind] for deer in horde.deers]
+        return [deer for herd in self.agent_groups[Herd.kind] for deer in herd.deers]
