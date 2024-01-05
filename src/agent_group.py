@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .wolf_simulation import Simulation
+from .cell import Terrain
 
 class AgentGroup:
     kind: str = "abstract"
@@ -18,6 +19,8 @@ class AgentGroup:
         self.y = y
 
     def move(self, dx, dy):
+        if(self.sim.grid[(self.x + dx) % self.sim.width][(self.y + dy) % self.sim.height].terrain == Terrain.Water):
+            return
         self.x = (self.x + dx) % self.sim.width
         self.y = (self.y + dy) % self.sim.height
 

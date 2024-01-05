@@ -49,4 +49,8 @@ def draw_agents(simulation: Simulation, camera: Camera) -> pygame.Surface:
         rect = pygame.Rect((pack.x - view.left) * view.cell_size, (pack.y - view.top) * view.cell_size, view.cell_size, view.cell_size)
         pygame.draw.rect(surface, (255, 0, 0), rect)
 
+    for herd in simulation.agent_groups[Herd.kind]:
+        rect = pygame.Rect((herd.x - view.left) * view.cell_size, (herd.y - view.top) * view.cell_size, view.cell_size, view.cell_size)
+        pygame.draw.rect(surface, (255, 255, 0), rect)
+
     return surface

@@ -57,7 +57,7 @@ class Simulation:
 
     def generate_water(self, width, height):
             water_grid = [[0 for _ in range(height)] for _ in range(width)]
-            scale = 7
+            scale = 6.9
             octaves = 3
             persistence = 0.1
             threshold = 0.25
@@ -80,8 +80,6 @@ class Simulation:
             while(self.grid[herd_pos[0]][herd_pos[1]].terrain == Terrain.Water):
                 herd_pos = random.choice(self.groups_positions)
                 self.groups_positions.remove(herd_pos)
-            herd_pos = random.choice(self.groups_positions)
-            self.groups_positions.remove(herd_pos)
             self.agent_groups[Herd.kind].extend([
                 Herd(self, herd_pos[0], herd_pos[1]),
                 ])
@@ -95,7 +93,6 @@ class Simulation:
 
         for agent_to_kill in self.deathnote:
             for herd in self.agent_groups[Herd.kind]:
-                # does not work
                 herd.kill_deer(agent_to_kill)
         self.deathnote = []
 
