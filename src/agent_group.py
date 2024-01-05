@@ -18,9 +18,10 @@ class AgentGroup:
         self.x = x
         self.y = y
 
-    def move(self, dx, dy):
+    def move(self, dx, dy) -> bool:
         if(self.sim.grid[(self.x + dx) % self.sim.width][(self.y + dy) % self.sim.height].terrain == Terrain.Water):
-            return
+            return False
         self.x = (self.x + dx) % self.sim.width
         self.y = (self.y + dy) % self.sim.height
+        return True
 

@@ -4,7 +4,7 @@ from .cell import Terrain
 class PathFinder:
     def __init__(self, sim):
         self.sim = sim
-        
+
     def find_path(self, start, goal) -> list[tuple[int, int]]:
         # Define a priority queue to store the nodes to be explored
         open_set = PriorityQueue()

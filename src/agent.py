@@ -14,10 +14,12 @@ class Agent:
     def step(self):
         self.move(1, 0)
 
-    def move(self, dx, dy):
+    def move(self, dx, dy) -> bool:
         x = (self.x + dx) % self.sim.width
         y = (self.y + dy) % self.sim.height
         cell: Cell = self.sim.grid[x][y]
         if cell.terrain == Terrain.Grass:
             self.x = x
             self.y = y
+            return True
+        return False

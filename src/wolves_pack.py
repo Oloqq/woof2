@@ -15,6 +15,7 @@ class Pack(AgentGroup):
     kind: str = "pack of wolves"
     nearest_herd: Herd = None
     path: list[tuple[int, int]] = []
+    state: str = "chill"
 
     def __init__(self, sim: Simulation, x, y):
         super().__init__(sim, Params.wolves_pack_size, Params.wolves_pack_territory_length, x, y)
@@ -35,9 +36,12 @@ class Pack(AgentGroup):
 
 
     def step(self):
+        self.state = "chill"
         for wolf in self.wolves:
             wolf.endurance -= 5
-            if wolf.endurance <= 0:
+            if wolf.endurance <= Params.wolf_hunger_threshold:
+                self.state = "hunt"
+            elif wolf.endurance <= 0:
                 self.kill_wolf(wolf)
 
         self.move_agents()
@@ -45,9 +49,10 @@ class Pack(AgentGroup):
         for wolf in self.wolves:
             cell_content = self.sim.get_cell_content(wolf.x, wolf.y)
             if cell_content is not None and cell_content.kind == Deer.kind:
-                self.sim.deathnote.append(cell_content)
+                if self.state == "hunt":
+                    self.sim.deathnote.append(cell_content)
                 for wolf_eating in self.wolves:
-                    wolf_eating.endurance = 1000
+                    wolf_eating.endurance = Params.wolf_max_endurance
                 self.nearest_herd = None
                 break
 
@@ -58,7 +63,27 @@ class Pack(AgentGroup):
             self.sim.agent_groups[self.kind].remove(self)
             self.sim.groups_positions.append([self.x, self.y])
 
+    def random_move(self):
+        return random.choice([-1, 0, 1])
+
     def move_agents(self):
+        if(self.state == "chill"):
+            for wolf in self.wolves:
+                if wolf.x < self.xmin:
+                    wolf.step(1, 0)
+                elif wolf.x > self.xmax:
+                    wolf.step(-1, 0)
+                else:
+                    wolf.step(self.random_move(), 0)
+
+                if wolf.y < self.ymin:
+                    wolf.step(0, 1)
+                elif wolf.y > self.ymax:
+                    wolf.step(0, -1)
+                else:
+                    wolf.step(0, self.random_move())
+            return
+
         if self.nearest_herd is None:
             self.nearest_herd = self.find_nearest_herd()
             self.path = self.path_finder.find_path((self.x, self.y), (self.nearest_herd.x, self.nearest_herd.y))
@@ -70,6 +95,7 @@ class Pack(AgentGroup):
             for wolf in self.wolves:
                 path_to_follow = self.path_finder.find_path((wolf.x, wolf.y), (self.x, self.y))
                 if len(path_to_follow) > 1:
+                    # TODO if wolf does not move, we may need to find a path for him
                     wolf.step(path_to_follow[1][0] - wolf.x, path_to_follow[1][1] - wolf.y)
             self.path.pop(0)
         else:
