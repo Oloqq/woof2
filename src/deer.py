@@ -13,4 +13,5 @@ class Deer(Agent):
         super().__init__(simulation, x, y)
 
     def step(self, dx, dy):
-        self.move(dx, dy)
+        if self.sim.get_cell_content(self.x + dx, self.y + dy) is None:
+            self.move(dx, dy)

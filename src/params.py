@@ -6,3 +6,6 @@ class Params:
     deer_herd_territory_length = 8
     deer_herd_size: int = 20
     min_herd_num: int = 6
+    wolves_pack_territory_length: int = 5
+    wolves_pack_size: int = 6
+    pack_num: int = 2

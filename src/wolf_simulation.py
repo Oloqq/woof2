@@ -3,6 +3,7 @@ from .wolf import Wolf
 from .deer import Deer
 from .agent_group import AgentGroup
 from .deer_herd import Herd
+from .wolves_pack import Pack
 from .cell import Cell, Terrain
 from .params import Params
 import random
@@ -17,12 +18,10 @@ class Simulation:
             for i in range((world_size[0] - 2) // Params.deer_herd_territory_length)
             for j in range((world_size[1] - 2) // Params.deer_herd_territory_length)
         ]
-        self.deer_herd_positions = [[int(p[0]), int(p[1])] for p in pos]
-        self.agents: dict[str, list[Agent]] = {
-            Wolf.kind: []
-        }
+        self.groups_positions = [[int(p[0]), int(p[1])] for p in pos]
         self.agent_groups: dict[str, list[AgentGroup]] = {
-            Herd.kind : []
+            Herd.kind : [],
+            Pack.kind : []
         }
         self.deathnote: list[Agent] = []
         self.grid: list[list[Cell]] = [[Cell() for _ in range(self.height)] for _ in range(self.width)]
@@ -41,15 +40,27 @@ class Simulation:
                 if water_grid[x][y] == 1:
                     self.grid[x][y].terrain = Terrain.Water
 
+        # generate wolves
+        for _ in range(Params.pack_num):
+            pack_pos = random.choice(self.groups_positions)
+            self.groups_positions.remove(pack_pos)
+            # Check if the position is not water
+            while self.grid[pack_pos[0]][pack_pos[1]].terrain == Terrain.Water:
+                pack_pos = random.choice(self.groups_positions)
+                self.groups_positions.remove(pack_pos)
+            self.agent_groups[Pack.kind].extend([
+                Pack(self, pack_pos[0], pack_pos[1]),
+            ])
+
         self.reset()
 
 
     def generate_water(self, width, height):
             water_grid = [[0 for _ in range(height)] for _ in range(width)]
-            scale = 10  # Adjust the scale to control the water pattern
-            octaves = 1 # Adjust the number of octaves to control the level of detail
-            persistence = 0.4  # Adjust the persistence to control the roughness
-            threshold = 0.22  # Adjust the threshold to control the amount of water
+            scale = 7
+            octaves = 3
+            persistence = 0.1
+            threshold = 0.25
 
             for x in range(width):
                 for y in range(height):
@@ -59,67 +70,53 @@ class Simulation:
                     if noise_value > threshold:
                         water_grid[x][y] = 1
 
-            for x in range(1, width - 1):
-                for y in range(1, height - 1):
-                    if (
-                        water_grid[x-1][y] == 1 and
-                        water_grid[x+1][y] == 1 and
-                        water_grid[x][y-1] == 1 and
-                        water_grid[x][y+1] == 1
-                    ):
-                        water_grid[x][y] = 1
-                    elif (
-                        water_grid[x-1][y] == 0 and
-                        water_grid[x+1][y] == 0 and
-                        water_grid[x][y-1] == 0 and
-                        water_grid[x][y+1] == 0
-                    ):
-                        water_grid[x][y] = 0
-
             return water_grid
 
     def reset(self):
         for _ in range(Params.min_herd_num):
-            herd_pos = random.choice(self.deer_herd_positions)
-            self.deer_herd_positions.remove(herd_pos)
+            herd_pos = random.choice(self.groups_positions)
+            self.groups_positions.remove(herd_pos)
+            # it can cause the simulation to crash when there is no more space for agents
+            while(self.grid[herd_pos[0]][herd_pos[1]].terrain == Terrain.Water):
+                herd_pos = random.choice(self.groups_positions)
+                self.groups_positions.remove(herd_pos)
+            herd_pos = random.choice(self.groups_positions)
+            self.groups_positions.remove(herd_pos)
             self.agent_groups[Herd.kind].extend([
                 Herd(self, herd_pos[0], herd_pos[1]),
                 ])
 
-        self.agents[Wolf.kind].extend([
-            Wolf(self, 25, 15),
-            Wolf(self, 25, 10),
-            Wolf(self, 25, 20),
-            ])
-
     def step(self):
+        for pack in self.agent_groups[Pack.kind]:
+            pack.step()
+
         for herd in self.agent_groups[Herd.kind]:
             herd.step()
 
-        for wolf in self.agents[Wolf.kind]:
-            wolf.step()
-
         for agent_to_kill in self.deathnote:
             for herd in self.agent_groups[Herd.kind]:
+                # does not work
                 herd.kill_deer(agent_to_kill)
         self.deathnote = []
 
         for _ in range(Params.min_herd_num - len(self.agent_groups[Herd.kind])):
-            herd_pos = random.choice(self.deer_herd_positions)
-            self.deer_herd_positions.remove(herd_pos)
+            herd_pos = random.choice(self.groups_positions)
+            self.groups_positions.remove(herd_pos)
             self.agent_groups[Herd.kind].extend([
                 Herd(self, herd_pos[0], herd_pos[1]),
                 ])
 
     def get_cell_content(self, x, y) -> Agent|None:
-        for _, agents in self.agents.items():
-            for agent in agents:
-                if agent.x == x and agent.y == y:
-                    return agent
         for deer in self.get_deers():
             if deer.x == x and deer.y == y:
                     return deer
+        for wolf in self.get_wolves():
+            if wolf.x == x and wolf.y == y:
+                    return wolf
         return None
 
     def get_deers(self) -> list[Deer]:
         return [deer for herd in self.agent_groups[Herd.kind] for deer in herd.deers]
+
+    def get_wolves(self) -> list[Wolf]:
+        return [wolf for pack in self.agent_groups[Pack.kind] for wolf in pack.wolves]

@@ -32,9 +32,9 @@ class Herd(AgentGroup):
         return random.choice([-1, 0, 1])
 
     def step(self):
-        self.move(self.random_move(), self.random_move())
+        self.move_agents(self.random_move(), self.random_move())
 
-    def move(self, dx, dy):
+    def move_agents(self, dx, dy):
         for deer in self.deers:
             if dx > 0 and deer.x <= self.xmin or dx < 0 and deer.x >= self.xmax:
                 deer.move(dx, 0)
@@ -45,12 +45,16 @@ class Herd(AgentGroup):
                 deer.move(0, dy)
             else:
                 deer.move(0, self.random_move())
+        self.x = int(sum(deer.x for deer in self.deers) / len(self.deers))
+        self.y = int(sum(deer.y for deer in self.deers) / len(self.deers))
+
 
     def kill_deer(self, deer: Deer):
         if deer in self.deers:
             self.deers.remove(deer)
-        if(len(self.deers) == 0):
+        if len(self.deers) == 0:
             self.sim.agent_groups[self.kind].remove(self)
+            self.sim.groups_positions.append([self.x, self.y])
 
 
 
