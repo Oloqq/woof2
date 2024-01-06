@@ -17,7 +17,7 @@ class Pack(AgentGroup):
     kind: str = "pack of wolves"
 
     def __init__(self, sim: Simulation, x, y):
-        super().__init__(sim, Params.wolves_pack_size, Params.wolves_pack_territory_length, x, y)
+        super().__init__(sim, Params.pack_size, Params.pack_territory_length, x, y)
 
         global pack_id
         self.id = pack_id
@@ -29,12 +29,12 @@ class Pack(AgentGroup):
         self.path: list[tuple[int, int]] = []
         self.state: str = "chill"
 
-        wolves_density = Params.wolves_pack_size / (Params.wolves_pack_territory_length ** 2)
+        wolves_density = Params.pack_size / (Params.pack_territory_length ** 2)
         for i in range(self.xmin, self.xmax + 1):
-            if(len(self.wolves)) >= Params.wolves_pack_size:
+            if(len(self.wolves)) >= Params.pack_size:
                 break
             for j in range(self.ymin, self.ymax + 1):
-                if(len(self.wolves)) >= Params.wolves_pack_size:
+                if(len(self.wolves)) >= Params.pack_size:
                     break
                 if random.random() <= wolves_density + 0.1:
                     if not sim.grid[i][j].terrain == Terrain.Water:

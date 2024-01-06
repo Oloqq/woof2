@@ -5,7 +5,7 @@ if TYPE_CHECKING:
 from .cell import Terrain
 
 class AgentGroup:
-    kind: str = "abstract"
+    kind: str = "pack of abstract agents"
     xmin = property(lambda self: self.x - self.territory_length // 2)
     xmax = property(lambda self: self.xmin + self.territory_length)
     ymin = property(lambda self: self.y - self.territory_length // 2)

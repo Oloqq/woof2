@@ -14,16 +14,16 @@ class Herd(AgentGroup):
     path: list[tuple[int, int]] = []
 
     def __init__(self, sim: Simulation, x, y):
-        super().__init__(sim, Params.deer_herd_size, Params.deer_herd_territory_length, x, y)
+        super().__init__(sim, Params.herd_size, Params.herd_territory_size, x, y)
         self.deers: list[Deer] = []
         self.path_finder = PathFinder(sim)
         self.state = "chill"
-        deer_density = Params.deer_herd_size / (Params.deer_herd_territory_length ** 2)
+        deer_density = Params.herd_size / (Params.herd_territory_size ** 2)
         for i in range(self.xmin, self.xmax + 1):
-            if(len(self.deers)) >= Params.deer_herd_size + 5:
+            if(len(self.deers)) >= Params.herd_size + 5:
                 break
             for j in range(self.ymin, self.ymax + 1):
-                if(len(self.deers)) >= Params.deer_herd_size + 5:
+                if(len(self.deers)) >= Params.herd_size + 5:
                     break
                 if random.random() <= deer_density + 0.1:
                     if not sim.grid[i][j].terrain == Terrain.Water:
@@ -46,7 +46,7 @@ class Herd(AgentGroup):
 
     def step(self):
         nearest_pack, distance = self.calculate_distance_to_wolves()
-        if distance < Params.deer_herd_safety_distance:
+        if distance < Params.deer_max_tolerated_distance_from_wolves:
             self.state = "run"
         else:
             self.state = "chill"
