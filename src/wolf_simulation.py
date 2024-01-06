@@ -76,22 +76,24 @@ class Simulation:
         ]
 
         # generate wolves
-        for _ in range(len(Params.pack_territory_centers)):
-            pack_pos = random.choice(self.groups_positions)
-            self.groups_positions.remove(pack_pos)
-            # Check if the position is not water
-            while self.grid[pack_pos[0]][pack_pos[1]].terrain == Terrain.Water:
-                pack_pos = random.choice(self.groups_positions)
-                self.groups_positions.remove(pack_pos)
+        for pack_center in Params.pack_territory_centers:
+            x, y = pack_center
+            x = min(Params.grid_size[0] - 1, max(0, x + random.randint(-100, 100)))
+            y = min(Params.grid_size[1] - 1, max(0, x + random.randint(-100, 100)))
+            while self.grid[x][y].terrain == Terrain.Water:
+                x = min(Params.grid_size[0] - 1, max(0, x + random.randint(-100, 100)))
+                y = min(Params.grid_size[1] - 1, max(0, x + random.randint(-100, 100)))
+            print(x, y)
             self.agent_groups[Pack.kind].extend([
-                Pack(self, pack_pos[0], pack_pos[1]),
+                Pack(self, x, y),
             ])
 
         for _ in range(Params.min_herd_num):
             herd_pos = random.choice(self.groups_positions)
             self.groups_positions.remove(herd_pos)
             # it can cause the simulation to crash when there is no more space for agents
-            while(self.grid[herd_pos[0]][herd_pos[1]].terrain == Terrain.Water):
+            while self.grid[herd_pos[0]][herd_pos[1]].terrain == Terrain.Water:
+                assert len(self.groups_positions) > 0, "no more space for agents"
                 herd_pos = random.choice(self.groups_positions)
                 self.groups_positions.remove(herd_pos)
             self.agent_groups[Herd.kind].extend([

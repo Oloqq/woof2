@@ -3,6 +3,7 @@
   -  wilki zblizajac sie do stada powinny przysprintowac (przechodzic kilka kratek na step)
   -  wilki nie rozpoczynaja polowania na stada poza ich terenem
   -  polowanie moze trwac poza terenem watahy przez X stepow/minut, potem odpuszczaja i wracaja do siebie
+  - zmiana celu jesli pojawi sie blizsza wataha
 
 - przyciski
   - run
