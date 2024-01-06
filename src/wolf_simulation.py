@@ -78,11 +78,12 @@ class Simulation:
         # generate wolves
         for pack_center in Params.pack_territory_centers:
             x, y = pack_center
-            x = min(Params.grid_size[0] - 1, max(0, x + random.randint(-100, 100)))
-            y = min(Params.grid_size[1] - 1, max(0, x + random.randint(-100, 100)))
+            variance = Params.offcenter_spawning_distance
+            x = min(Params.grid_size[0] - 1, max(0, x + random.randint(-variance, variance)))
+            y = min(Params.grid_size[1] - 1, max(0, y + random.randint(-variance, variance)))
             while self.grid[x][y].terrain == Terrain.Water:
-                x = min(Params.grid_size[0] - 1, max(0, x + random.randint(-100, 100)))
-                y = min(Params.grid_size[1] - 1, max(0, x + random.randint(-100, 100)))
+                x = min(Params.grid_size[0] - 1, max(0, x + random.randint(-variance, variance)))
+                y = min(Params.grid_size[1] - 1, max(0, y + random.randint(-variance, variance)))
             print(x, y)
             self.agent_groups[Pack.kind].extend([
                 Pack(self, x, y),

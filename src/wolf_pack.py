@@ -40,7 +40,7 @@ class Pack(AgentGroup):
                 if (len(self.wolves)) >= Params.pack_size:
                     break
                 if random.random() <= wolves_density + 0.1:
-                    if not sim.grid[i][j].terrain == Terrain.Water:
+                    if i < len(sim.grid) and j < len(sim.grid[i]) and sim.grid[i][j].terrain != Terrain.Water:
                         self.wolves.append(Wolf(sim, i, j, self))
 
     def step(self):
