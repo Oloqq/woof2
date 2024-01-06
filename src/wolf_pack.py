@@ -11,17 +11,23 @@ from .deer import Deer
 from .deer_herd import Herd
 from .path_finder import PathFinder
 
+pack_id = 0
+
 class Pack(AgentGroup):
     kind: str = "pack of wolves"
-    nearest_herd: Herd = None
-    path: list[tuple[int, int]] = []
-    state: str = "chill"
 
     def __init__(self, sim: Simulation, x, y):
         super().__init__(sim, Params.wolves_pack_size, Params.wolves_pack_territory_length, x, y)
 
+        global pack_id
+        self.id = pack_id
+        pack_id += 1
+
         self.path_finder = PathFinder(sim)
         self.wolves: list[Wolf] = []
+        self.nearest_herd: Herd = None
+        self.path: list[tuple[int, int]] = []
+        self.state: str = "chill"
 
         wolves_density = Params.wolves_pack_size / (Params.wolves_pack_territory_length ** 2)
         for i in range(self.xmin, self.xmax + 1):
@@ -32,7 +38,7 @@ class Pack(AgentGroup):
                     break
                 if random.uniform(0,1) <= wolves_density + 0.1:
                     if not sim.grid[i][j].terrain == Terrain.Water:
-                        self.wolves.append(Wolf(sim, i, j))
+                        self.wolves.append(Wolf(sim, i, j, self))
 
 
     def step(self):

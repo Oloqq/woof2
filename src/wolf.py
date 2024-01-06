@@ -9,10 +9,11 @@ import random
 class Wolf(Agent):
     kind: str = "wolf"
 
-    def __init__(self, simulation: Simulation, x: int, y: int):
+    def __init__(self, simulation: Simulation, x: int, y: int, pack):
         super().__init__(simulation, x, y)
         self.speed = 1
         self.endurance = random.randint(Params.wolf_hunger_threshold, Params.wolf_max_endurance)
+        self.pack = pack
 
     def step(self, dx, dy):
         cell_content = self.sim.get_cell_content(self.x + dx, self.y + dy)
