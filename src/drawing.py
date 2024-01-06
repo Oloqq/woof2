@@ -57,6 +57,7 @@ def draw_agents(simulation: Simulation, camera: Camera, overlay: str|None) -> py
             case "scent":
                 pack_color = PACK_COLORS[agent.pack.id] if agent.pack.id < len(PACK_COLORS) else WOLF_COLOR
                 pygame.draw.rect(surface, pack_color, rect)
+                pygame.draw.rect(surface, (WOLF_COLOR), rect, 1)
             case None:
                 if (agent.endurance >= Params.wolf_hunger_threshold):
                     pygame.draw.rect(surface, (WOLF_COLOR), rect)
