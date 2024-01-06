@@ -36,7 +36,7 @@ class Pack(AgentGroup):
             for j in range(self.ymin, self.ymax + 1):
                 if(len(self.wolves)) >= Params.wolves_pack_size:
                     break
-                if random.uniform(0,1) <= wolves_density + 0.1:
+                if random.random() <= wolves_density + 0.1:
                     if not sim.grid[i][j].terrain == Terrain.Water:
                         self.wolves.append(Wolf(sim, i, j, self))
 
@@ -103,6 +103,8 @@ class Pack(AgentGroup):
                 if len(path_to_follow) > 1:
                     # TODO if wolf does not move, we may need to find a path for him
                     wolf.step(path_to_follow[1][0] - wolf.x, path_to_follow[1][1] - wolf.y)
+                    if random.random() < 0.5:
+                        wolf.step(self.random_move(), self.random_move())
             self.path.pop(0)
         else:
             self.nearest_herd = None

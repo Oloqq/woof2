@@ -1,10 +1,10 @@
 WINDOW_SIZE = (1000, 600) # outside Params class because it will never be settable via a config file
 
 class Params:
-    grid_size: tuple[int, int] = (200, 200)
+    grid_size: tuple[int, int] = (250, 250)
 
     deer_herd_territory_length = 12
-    deer_herd_safety_distance = 30
+    deer_herd_safety_distance = 40
     deer_herd_size: int = 15
     min_herd_num: int = 6
     wolves_pack_territory_length: int = 5

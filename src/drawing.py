@@ -39,8 +39,6 @@ def draw_ground(simulation: Simulation, camera: Camera, overlay: str|None) -> py
         for iy, y in enumerate(range(view.top, min(simulation.height, view.bottom))):
             rect = pygame.Rect(ix * view.cell_size, iy * view.cell_size, view.cell_size, view.cell_size)
             draw_tile(surface, simulation, x, y, rect, overlay)
-            # if camera.zoom > 0.6:
-            #     pygame.draw.rect(surface, GRID_COLOR, rect, 1)
     return surface
 
 def draw_agents(simulation: Simulation, camera: Camera, overlay: str|None) -> pygame.Surface:
