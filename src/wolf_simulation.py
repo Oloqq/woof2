@@ -8,6 +8,7 @@ from .cell import Cell, Terrain
 from .params import Params
 import random
 import noise
+import numpy as np
 
 class Simulation:
     def __init__(self, world_size):
@@ -35,13 +36,21 @@ class Simulation:
             self.grid[self.width-1][y].terrain = Terrain.Water
         # generate water using Perlin noise
         water_grid = self.generate_water(self.width, self.height)
+
+        def owner_of_tile(x, y) -> int:
+            pack_centers = np.array(Params.pack_territory_centers)
+            distances = np.sqrt(np.sum(np.power(pack_centers - np.array([x, y]), 2), axis = 1))
+            owner_pack_id = np.argmin(distances)
+            return owner_pack_id
+
         for x in range(self.width):
             for y in range(self.height):
                 if water_grid[x][y] == 1:
                     self.grid[x][y].terrain = Terrain.Water
+                self.grid[x][y].scent_pack = owner_of_tile(x, y)
 
         # generate wolves
-        for _ in range(Params.pack_num):
+        for _ in range(len(Params.pack_territory_centers)):
             pack_pos = random.choice(self.groups_positions)
             self.groups_positions.remove(pack_pos)
             # Check if the position is not water

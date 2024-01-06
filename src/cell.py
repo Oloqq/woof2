@@ -6,5 +6,6 @@ class Terrain(Enum):
 
 class Cell:
     def __init__(self):
-        self.scent = 0
+        self.scent_strength = 1
+        self.scent_pack = -1
         self.terrain = Terrain.Grass

@@ -20,7 +20,8 @@ def draw_tile(surface: pygame.Surface, simulation: Simulation, x: int, y: int, a
         case Terrain.Grass:
             match overlay:
                 case "scent":
-                    pygame.draw.rect(surface, (0, 0, 0), at)
+                    color = PACK_COLORS[simulation.grid[x][y].scent_pack] if simulation.grid[x][y].scent_pack < len(PACK_COLORS) else (0, 0, 0)
+                    pygame.draw.rect(surface, color, at)
                 case None:
                     pygame.draw.rect(surface, GRASS_COLOR, at)
                 case _:
@@ -29,7 +30,6 @@ def draw_tile(surface: pygame.Surface, simulation: Simulation, x: int, y: int, a
             pygame.draw.rect(surface, WATER_COLOR, at)
 
 def draw_ground(simulation: Simulation, camera: Camera, overlay: str|None) -> pygame.Surface:
-    print(overlay)
     surface = pygame.Surface(WINDOW_SIZE)
     surface.fill(GRID_COLOR)
 

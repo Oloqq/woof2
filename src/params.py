@@ -9,6 +9,6 @@ class Params:
     min_herd_num: int = 6
     wolves_pack_territory_length: int = 5
     wolves_pack_size: int = 9
-    pack_num: int = 3
+    pack_territory_centers = [(50, 0), (199, 20), (0, 170), (199, 199)]
     wolf_hunger_threshold: int = 300
     wolf_max_endurance: int = 500
