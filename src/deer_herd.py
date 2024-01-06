@@ -25,7 +25,7 @@ class Herd(AgentGroup):
             for j in range(self.ymin, self.ymax + 1):
                 if(len(self.deers)) >= Params.deer_herd_size + 5:
                     break
-                if random.uniform(0,1) <= deer_density + 0.1:
+                if random.random() <= deer_density + 0.1:
                     if not sim.grid[i][j].terrain == Terrain.Water:
                         self.deers.append(Deer(sim, i, j))
 
@@ -94,6 +94,7 @@ class Herd(AgentGroup):
 
             for deer in self.deers:
                 deer_moved = deer.step(dx, dy)
+                deer.step(self.random_move(), self.random_move())
                 if not deer_moved:
                     path_to_follow = self.path_finder.find_path((deer.x, deer.y), (self.x, self.y))
                     if path_to_follow is not None and len(path_to_follow) > 0:

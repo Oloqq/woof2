@@ -27,8 +27,6 @@ def draw_ground(simulation: Simulation, camera: Camera) -> pygame.Surface:
                     pygame.draw.rect(surface, GRASS_COLOR, rect)
                 case Terrain.Water:
                     pygame.draw.rect(surface, WATER_COLOR, rect)
-            if camera.zoom > 0.6:
-                pygame.draw.rect(surface, GRID_COLOR, rect, 1)
     return surface
 
 def draw_agents(simulation: Simulation, camera: Camera) -> pygame.Surface:

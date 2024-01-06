@@ -46,7 +46,6 @@ class PathFinder:
 
         return []  # No path found
 
-
     def get_neighbors(self, x, y) -> list[tuple[int, int]]:
         neighbors = []
         directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]  # Possible movement directions (right, left, up, down)
@@ -58,12 +57,10 @@ class PathFinder:
 
         return neighbors
 
-
     def is_valid_position(self, x, y) -> bool:
         if self.sim.grid[x][y].terrain == Terrain.Water:
             return False
         return True
-
 
     def calculate_distance(self, start, goal) -> float:
         return ((start[0] - goal[0]) ** 2 + (start[1] - goal[1]) ** 2) ** 0.5
