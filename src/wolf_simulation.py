@@ -104,7 +104,7 @@ class Simulation:
                 ])
 
     def get_cell_content(self, x, y) -> Agent|None:
-        for deer in self.get_deers():
+        for deer in self.get_deer():
             if deer.x == x and deer.y == y:
                     return deer
         for wolf in self.get_wolves():
@@ -112,7 +112,7 @@ class Simulation:
                     return wolf
         return None
 
-    def get_deers(self) -> list[Deer]:
+    def get_deer(self) -> list[Deer]:
         return [deer for herd in self.agent_groups[Herd.kind] for deer in herd.deers]
 
     def get_wolves(self) -> list[Wolf]:

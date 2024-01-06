@@ -11,9 +11,10 @@ camera = Camera(0, 0, 0.5)
 running = True
 
 simulation = Simulation(Params.grid_size)
+overlay = None
 
 def process_events():
-    global running
+    global running, overlay
 
     for event in pygame.event.get():
         match event.type:
@@ -24,6 +25,12 @@ def process_events():
                     print("run/pause")
                 if event.key == pygame.K_TAB:
                     simulation.step()
+                if event.key == pygame.K_c: # TODO make UI
+                    print("scent overlay")
+                    overlay = "scent"
+                if event.key == pygame.K_v: # TODO make UI
+                    print("default display")
+                    overlay = None
             case pygame_gui.UI_BUTTON_PRESSED:
                 if event.ui_element == ui_elements["next_step_btn"]:
                     simulation.step()
@@ -49,11 +56,8 @@ def main():
         # if should perform step then update the simulation
 
         window.fill((255, 255, 255))
-        for surface in (
-            draw_ground(simulation, camera),
-            draw_agents(simulation, camera),
-            ):
-            window.blit(surface, (0, 0)) # Draw surface while applying camera translation
+        window.blit(draw_ground(simulation, camera, overlay), (0, 0))
+        window.blit(draw_agents(simulation, camera, overlay), (0, 0))
         manager.draw_ui(window)
         pygame.display.flip()
 
