@@ -1,5 +1,5 @@
 - polowanie
-  -  mala losowosc do ruchu wilkow podczas polowania (szczegolnie gdy stado jest jeszcze daleko)
+  - ✅ mala losowosc do ruchu wilkow podczas polowania (szczegolnie gdy stado jest jeszcze daleko)
   -  wilki zblizajac sie do stada powinny przysprintowac (przechodzic kilka kratek na step)
   -  wilki nie rozpoczynaja polowania na stada poza ich terenem
   -  polowanie moze trwac poza terenem watahy przez X stepow/minut, potem odpuszczaja i wracaja do siebie
@@ -10,10 +10,10 @@
   - reset
 
 - wizualizacja
-  - "scent overlay" czyli teren watah
-  - kolorowanie wilkow wedlug przynaleznosci do watahy (te same kolory co scent overlay)
+  - ✅"scent overlay" czyli teren watah
+  - ✅kolorowanie wilkow wedlug przynaleznosci do watahy (te same kolory co scent overlay)
 
 - interakcje miedzy watahami
-  - implementacja scentu
+  - ✅implementacja scentu
   - jesli podczas polowania wiecej niz 1 wataha goni stado, to mniejsze watahy uciekaja
     - jesli watahy wejda na siebie losowo w innym momencie tez powinny sie rozejsc
