@@ -1,14 +1,21 @@
-- scent visualization (enable/disable with a boolean flag)
-- initialize Simulation in main to allow reading a config file
-- allow running simulation at set frames (steps) per second
-- allow running simulation at set amount of steps
-- draw ui
-  - sliders connected to simulation params
-  - step button
-- implement resetting on demand
-- implement a grid for checking grid content
--
+- gdy jelenie uciekaja przed wilkami i maja na trasie ucieczki wode to sie ciagna wezykiem przy brzegu, to sie rzuca w oczy jako nienaturalne. Teraz ucieczka to po prostu naiwny ruch w przeciwnym kierunku niz jest wilk cnie. Trzeba by zaimplementowac ucieczke jako wybor docelowego punktu z dala od wilkow, wtedy bedzie mozna sprawdzic czy ten punkt nie wypada w wodzie albo na innej watasze
 
-- if simulation slow
-  - refactor Simulation.agents into a hashmap
-  - refactor get cell content so agents are tracked on a grid while moving
+- polowanie
+  -  mala losowosc do ruchu wilkow podczas polowania (szczegolnie gdy stado jest jeszcze daleko)
+  -  wilki zblizajac sie do stada powinny przysprintowac (przechodzic kilka kratek na step)
+  -  wilki nie rozpoczynaja polowania na stada poza ich terenem
+
+- przyciski
+  - run
+  - steps per second
+  - reset
+
+- wizualizacja
+  - "scent overlay" czyli teren watah
+  - kolorowanie wilkow wedlug przynaleznosci do watahy (te same kolory co scent overlay)
+
+- interakcje miedzy watahami
+  - implementacja scentu
+  - watahy nie chilluja razem po polowaniu, na chill zawsze wracaja na swoj teren
+  - jesli podczas polowania wiecej niz 1 wataha goni stado, to mniejsze watahy uciekaja
+    - jesli watahy wejda na siebie losowo w innym momencie tez powinny sie rozejsc
