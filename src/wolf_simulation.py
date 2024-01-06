@@ -3,7 +3,7 @@ from .wolf import Wolf
 from .deer import Deer
 from .agent_group import AgentGroup
 from .deer_herd import Herd
-from .wolves_pack import Pack
+from .wolf_pack import Pack
 from .cell import Cell, Terrain
 from .params import Params
 import random

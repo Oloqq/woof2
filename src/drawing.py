@@ -1,7 +1,7 @@
 import pygame
 from .wolf_simulation import Simulation, Terrain
 from .params import Params, WINDOW_SIZE
-from .wolves_pack import Pack
+from .wolf_pack import Pack
 from .deer_herd import Herd
 from .camera import Camera
 
@@ -12,6 +12,8 @@ CELL_SIZE_PX = 10
 DEER_COLOR = (186, 118, 46)
 WOLF_COLOR = (100, 100, 100)
 HUNGRY_WOLF_COLOR = (122, 42, 42)
+
+PACK_COLORS = [(230, 25, 75), (60, 180, 75), (255, 225, 25), (0, 130, 200), (245, 130, 48), (145, 30, 180), (70, 240, 240), (240, 50, 230), (210, 245, 60), (250, 190, 212), (0, 128, 128), (220, 190, 255), (170, 110, 40), (255, 250, 200), (128, 0, 0), (170, 255, 195), (128, 128, 0), (255, 215, 180), (0, 0, 128), (128, 128, 128)]
 
 def draw_tile(surface: pygame.Surface, simulation: Simulation, x: int, y: int, at: pygame.Rect, overlay: str|None):
     match simulation.grid[x][y].terrain:
