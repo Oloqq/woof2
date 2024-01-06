@@ -31,3 +31,5 @@ class Params:
         (255, 153, 255),  # magenta
         (255, 153, 204)  # light purple
     ]
+
+    sprint_speed = 3
