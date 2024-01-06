@@ -37,7 +37,7 @@ def draw_ground(simulation: Simulation, camera: Camera, overlay: str|None) -> py
 
     for ix, x in enumerate(range(view.left, min(simulation.width, view.right))):
         for iy, y in enumerate(range(view.top, min(simulation.height, view.bottom))):
-            rect = pygame.Rect(ix * view.cell_size, iy * view.cell_size, view.cell_size, view.cell_size)
+            rect = pygame.Rect(ix * view.cell_size, iy * view.cell_size, view.cell_size + 1, view.cell_size + 1)
             draw_tile(surface, simulation, x, y, rect, overlay)
     return surface
 
