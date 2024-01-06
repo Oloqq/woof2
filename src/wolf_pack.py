@@ -31,6 +31,7 @@ class Pack(AgentGroup):
         self.previous_herd: Herd = None
         self.path: list[tuple[int, int]] = []
         self.state: str = "chill"
+        self.safe_spots: list[tuple[int, int]] = []
 
         wolves_density = Params.pack_size / (Params.pack_territory_length ** 2)
         for i in range(self.xmin, self.xmax + 1):
@@ -42,6 +43,7 @@ class Pack(AgentGroup):
                 if random.random() <= wolves_density + 0.1:
                     if i < len(sim.grid) and j < len(sim.grid[i]) and sim.grid[i][j].terrain != Terrain.Water:
                         self.wolves.append(Wolf(sim, i, j, self))
+                        self.safe_spots.append((i, j))
 
     def step(self):
         self.state = "chill"
@@ -93,7 +95,14 @@ class Pack(AgentGroup):
     def move_agents(self):
         if (self.state == "chill"):
             self.previous_herd = None
-            self.move_agents_randomly()
+            if (self.sim.grid[self.x][self.y].scent_pack != self.id):
+                safe_spot = random.choice(self.safe_spots)
+                self.path = self.path_finder.find_path((self.x, self.y), safe_spot)
+                while len(self.path) != 0:
+                    self.move(self.path[0][0] - self.x, self.path[0][1] - self.y)
+                    self.path.pop(0)
+            else:
+                self.move_agents_randomly()
             return
 
         if self.nearest_herd is None:
