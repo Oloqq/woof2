@@ -38,3 +38,4 @@ class Params:
     ]
 
     sprint_speed = 3
+    sprint_distance = 25

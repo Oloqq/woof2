@@ -31,9 +31,12 @@ class Pack(AgentGroup):
         self.previous_herd: Herd = None
         self.path: list[tuple[int, int]] = []
         self.state: str = "chill"
-        self.safe_spots: list[tuple[int, int]] = []
+        self.safe_spot: tuple[int, int] = None
 
         wolves_density = Params.pack_size / (Params.pack_territory_length ** 2)
+
+        safe_spots = []
+
         for i in range(self.xmin, self.xmax + 1):
             if (len(self.wolves)) >= Params.pack_size:
                 break
@@ -43,7 +46,9 @@ class Pack(AgentGroup):
                 if random.random() <= wolves_density + 0.1:
                     if i < len(sim.grid) and j < len(sim.grid[i]) and sim.grid[i][j].terrain != Terrain.Water:
                         self.wolves.append(Wolf(sim, i, j, self))
-                        self.safe_spots.append((i, j))
+                        safe_spots.append((i, j))
+
+        self.safe_spot = random.choice(safe_spots)
 
     def step(self):
         self.state = "chill"
@@ -95,12 +100,18 @@ class Pack(AgentGroup):
     def move_agents(self):
         if (self.state == "chill"):
             self.previous_herd = None
-            if (self.sim.grid[self.x][self.y].scent_pack != self.id):
-                safe_spot = random.choice(self.safe_spots)
-                self.path = self.path_finder.find_path((self.x, self.y), safe_spot)
-                while len(self.path) != 0:
-                    self.move(self.path[0][0] - self.x, self.path[0][1] - self.y)
-                    self.path.pop(0)
+            if (self.sim.grid[self.x][self.y].scent_pack != self.id or (len(self.path) > 0 and self.sim.grid[self.path[-1][0]][self.path[-1][1]].scent_pack == self.id)):
+                if len(self.path) == 0:
+                    self.path = self.path_finder.find_path((self.x, self.y), self.safe_spot)
+
+                self.move(self.path[0][0] - self.x, self.path[0][1] - self.y)
+                for wolf in self.wolves:
+                    path_to_follow = self.path_finder.find_path((wolf.x, wolf.y), (self.x, self.y))
+                    if len(path_to_follow) > 1:
+                        wolf.step(path_to_follow[1][0] - wolf.x, path_to_follow[1][1] - wolf.y)
+                        if random.random() < 0.5:
+                            wolf.step(self.random_move(), self.random_move())
+                self.path.pop(0)
             else:
                 self.move_agents_randomly()
             return
@@ -117,9 +128,12 @@ class Pack(AgentGroup):
                 self.path.pop(0)
 
         if len(self.path) > 0:
-
+            if self.nearest_herd is None:
+                self.random_move()
+                self.path = []
+                return
             distance = self.path_finder.calculate_distance((self.x, self.y), (self.nearest_herd.x, self.nearest_herd.y))
-            steps = Params.sprint_speed if distance <= 25 else 1
+            steps = Params.sprint_speed if distance <= Params.sprint_distance else 1
             # when distance less than 25, move by Params.sprint_speed instead of 1
             for _ in range(steps):
                 if len(self.path) == 0:
