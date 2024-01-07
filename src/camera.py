@@ -15,11 +15,11 @@ class Camera:
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-            self.x = max(self.x - 10, 0)
+            self.x = max(self.x - 10, -100)
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             self.x += 10
         if keys[pygame.K_UP] or keys[pygame.K_w]:
-            self.y = max(self.y - 10, 0)
+            self.y = max(self.y - 10, -100)
         if keys[pygame.K_DOWN] or keys[pygame.K_s]:
             self.y += 10
         if keys[pygame.K_PLUS] or keys[pygame.K_EQUALS]:
@@ -30,8 +30,8 @@ class Camera:
     def visible_cells(self, original_size: int) -> View:
         scaled_cell_size = original_size * self.zoom
         cells_on_screen = (ceil(WINDOW_SIZE[0] / scaled_cell_size), ceil(WINDOW_SIZE[1] / scaled_cell_size))
-        left_bound = max(0, floor(self.x / scaled_cell_size))
-        top_bound  = max(0, floor(self.y / scaled_cell_size))
+        left_bound = floor(self.x / scaled_cell_size)
+        top_bound  = floor(self.y / scaled_cell_size)
         right_bound = left_bound + cells_on_screen[0]
         bottom_bound = top_bound + cells_on_screen[1]
         return View(left_bound, top_bound, right_bound, bottom_bound, scaled_cell_size)
