@@ -38,6 +38,12 @@ def process_events():
                     print('run sim button pressed!')
                 elif event.ui_element == ui_elements["reset_sim_btn"]:
                     print('reset sim button pressed!')
+                elif event.ui_element == ui_elements["normal_view_btn"]:
+                    print("default display")
+                    overlay = None
+                elif event.ui_element == ui_elements["scent_overlay_btn"]:
+                    print("scent overlay")
+                    overlay = "scent"
             case pygame_gui.UI_HORIZONTAL_SLIDER_MOVED:
                 if event.ui_element == ui_elements["steps_ps_slider"]:
                     print(event.value)

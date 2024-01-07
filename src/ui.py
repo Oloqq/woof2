@@ -23,11 +23,20 @@ def draw_ui() -> pygame.Surface:
                                                              ,start_value=0.5, value_range=(0, 10),
                                                              manager=manager)
 
+    normal_view_btn = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((10, 280), (200, 50)),
+                                                text='Normal view',
+                                                manager=manager)
+    scent_overlay_btn = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((10, 340), (200, 50)),
+                                                text='Scent overlay',
+                                                manager=manager)
+
     elements = {
         "next_step_btn": next_step_btn,
         "steps_ps_slider": steps_ps_slider,
         "run_sim_btn": run_sim_btn,
-        "reset_sim_btn": reset_sim_btn
+        "reset_sim_btn": reset_sim_btn,
+        "normal_view_btn": normal_view_btn,
+        "scent_overlay_btn": scent_overlay_btn,
     }
     return manager, elements
 
