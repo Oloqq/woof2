@@ -20,7 +20,7 @@ def draw_ui() -> pygame.Surface:
         relative_rect=pygame.Rect(10, 190, 200, 30),
         manager=manager)
     steps_ps_slider = pygame_gui.elements.UIHorizontalSlider(relative_rect=pygame.Rect((10, 220), (200, 50))
-                                                             ,start_value=0.5, value_range=(0, 10),
+                                                             ,start_value=2, value_range=(0.1, 10),
                                                              manager=manager)
 
     normal_view_btn = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((10, 280), (200, 50)),
