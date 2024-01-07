@@ -1,6 +1,6 @@
 import pygame
 from collections import namedtuple
-from .params import WINDOW_SIZE
+from .params import WINDOW_SIZE, Params
 from math import ceil, floor
 
 View = namedtuple("View", "left top right bottom cell_size")
@@ -23,9 +23,9 @@ class Camera:
         if keys[pygame.K_DOWN] or keys[pygame.K_s]:
             self.y += 10
         if keys[pygame.K_PLUS] or keys[pygame.K_EQUALS]:
-            self.zoom = min(2, self.zoom + 0.1)
+            self.zoom = min(Params.zoom_max, self.zoom + 0.1)
         if keys[pygame.K_MINUS]:
-            self.zoom = max(0.5, self.zoom - 0.1)
+            self.zoom = max(Params.zoom_min, self.zoom - 0.1)
 
     def visible_cells(self, original_size: int) -> View:
         scaled_cell_size = original_size * self.zoom
