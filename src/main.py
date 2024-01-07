@@ -13,7 +13,7 @@ running = True
 simulation = Simulation(Params.grid_size)
 overlay = None
 autostep = False
-seconds_per_step = 1
+seconds_per_step = 1 / ui_elements["steps_ps_slider"].current_value
 
 def process_events():
     global running, overlay, autostep, seconds_per_step
