@@ -25,12 +25,6 @@ def process_events():
                     print("run/pause")
                 if event.key == pygame.K_TAB:
                     simulation.step()
-                if event.key == pygame.K_c: # TODO make UI
-                    print("scent overlay")
-                    overlay = "scent"
-                if event.key == pygame.K_v: # TODO make UI
-                    print("default display")
-                    overlay = None
             case pygame_gui.UI_BUTTON_PRESSED:
                 if event.ui_element == ui_elements["next_step_btn"]:
                     simulation.step()
