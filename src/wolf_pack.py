@@ -56,7 +56,7 @@ class Pack(AgentGroup):
             wolf.endurance -= 5
             if wolf.endurance <= Params.wolf_hunger_threshold:
                 self.state = "hunt"
-            elif wolf.endurance <= 0:
+            if wolf.endurance <= 0:
                 self.kill_wolf(wolf)
 
         self.move_agents()
@@ -66,8 +66,8 @@ class Pack(AgentGroup):
             if cell_content is not None and cell_content.kind == Deer.kind:
                 if self.state == "hunt":
                     self.sim.deathnote.append(cell_content)
-                for wolf_eating in self.wolves:
-                    wolf_eating.endurance = Params.wolf_max_endurance
+                    for wolf_eating in self.wolves:
+                        wolf_eating.endurance = Params.wolf_max_endurance
                 self.nearest_herd = None
                 break
 
@@ -98,9 +98,10 @@ class Pack(AgentGroup):
                 wolf.step(0, self.random_move())
 
     def move_agents(self):
-        if (self.state == "chill"):
+        if self.state == "chill":
             self.previous_herd = None
-            if (self.sim.grid[self.x][self.y].scent_pack != self.id or (len(self.path) > 0 and self.sim.grid[self.path[-1][0]][self.path[-1][1]].scent_pack == self.id)):
+            # if they are on the edge of their territory - so multiple packs are not chilling next to each other on territory borders
+            if self.path_finder.calculate_distance((self.x, self.y), self.safe_spot) > 50 or (len(self.path) > 0 and self.sim.grid[self.path[-1][0]][self.path[-1][1]].scent_pack == self.id):
                 if len(self.path) == 0:
                     self.path = self.path_finder.find_path((self.x, self.y), self.safe_spot)
 
@@ -120,7 +121,7 @@ class Pack(AgentGroup):
             self.nearest_herd = self.find_nearest_herd()
             if self.nearest_herd:
                 self.path = self.path_finder.find_path((self.x, self.y), (self.nearest_herd.x, self.nearest_herd.y))
-            elif self.previous_herd:
+            elif self.previous_herd and any(wolf.endurance < 2000 for wolf in self.wolves):
                 # no nearest herd, but there is a previous herd, so switch back to it
                 self.nearest_herd = self.previous_herd
                 self.path = self.path_finder.find_path((self.x, self.y), (self.previous_herd.x, self.previous_herd.y))
@@ -129,8 +130,6 @@ class Pack(AgentGroup):
 
         if len(self.path) > 0:
             if self.nearest_herd is None:
-                # self.random_move()
-                # self.path = []
                 self.path = self.path_finder.find_path((self.x, self.y), self.safe_spot)
 
                 self.move(self.path[0][0] - self.x, self.path[0][1] - self.y)
@@ -142,6 +141,8 @@ class Pack(AgentGroup):
                             wolf.step(self.random_move(), self.random_move())
                 self.path.pop(0)
                 return
+
+
             distance = self.path_finder.calculate_distance((self.x, self.y), (self.nearest_herd.x, self.nearest_herd.y))
             steps = Params.sprint_speed if distance <= Params.sprint_distance else 1
             # when distance less than 25, move by Params.sprint_speed instead of 1
@@ -150,16 +151,27 @@ class Pack(AgentGroup):
                     break
 
                 self.move(self.path[0][0] - self.x, self.path[0][1] - self.y)
+
+                # adding this so the wolves are not following the wrong previous path to deers
+                if self.nearest_herd:
+                    if self.path_finder.calculate_distance((self.x, self.y), (self.nearest_herd.x, self.nearest_herd.y)) > distance:
+                        self.nearest_herd = None
+
+                    # check if the wolves are on their territory - if not check if another pack is following the prey - if there is one, the pack should give up on hunting
+                    if self.sim.grid[self.x][self.y].scent_pack != self.id and len([pack for pack in self.sim.agent_groups[self.kind] if pack.nearest_herd == self.nearest_herd]) > 1:
+                        print("here")
+                        self.nearest_herd = None
+                        self.previous_herd = None
+                        break
+
                 for wolf in self.wolves:
                     path_to_follow = self.path_finder.find_path((wolf.x, wolf.y), (self.x, self.y))
                     if len(path_to_follow) > 1:
-                        # TODO if wolf does not move, we may need to find a path for him
                         wolf.step(path_to_follow[1][0] - wolf.x, path_to_follow[1][1] - wolf.y)
                         if random.random() < 0.5:
                             wolf.step(self.random_move(), self.random_move())
                 self.path.pop(0)
         else:
-            # TODO: find new path for wolves
             self.move_agents_randomly()
             self.previous_herd = self.nearest_herd
             self.nearest_herd = None
@@ -168,9 +180,9 @@ class Pack(AgentGroup):
         nearest_herd = None
         min_distance = float('inf')
         for herd in self.sim.agent_groups[Herd.kind]:
-            # check if herd in the same territory
+            # check if herd in the same territory - if not wolves will attack only if they are really hungry
             herd_territory = self.sim.grid[herd.x][herd.y].scent_pack
-            if herd_territory != self.id:
+            if herd_territory != self.id and not any(wolf.endurance < 2000 for wolf in self.wolves):
                 continue
 
             distance = self.path_finder.calculate_distance((self.x, self.y), (herd.x, herd.y))

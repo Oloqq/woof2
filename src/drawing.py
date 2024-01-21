@@ -13,7 +13,7 @@ DEER_COLOR = (186, 118, 46)
 WOLF_COLOR = (100, 100, 100)
 HUNGRY_WOLF_COLOR = (122, 42, 42)
 
-PACK_COLORS = Params.pastelpaleta
+PACK_COLORS = Params.cute_uwu_kawaii_palette
 
 def draw_tile(surface: pygame.Surface, simulation: Simulation, x: int, y: int, at: pygame.Rect, overlay: str|None):
     match simulation.grid[x][y].terrain:
