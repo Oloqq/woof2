@@ -18,6 +18,8 @@ class Simulation:
             Herd.kind : [],
             Pack.kind : []
         }
+        self.i =0
+        self.wolves_alive = []
         self.deathnote: list[Agent] = []
 
         self.init_map()
@@ -112,6 +114,11 @@ class Simulation:
             for herd in self.agent_groups[Herd.kind]:
                 herd.kill_deer(agent_to_kill)
         self.deathnote = []
+
+        self.i += 1
+        if self.i % 10 == 0:
+            self.wolves_alive.append(len(self.get_wolves()))
+            print(self.wolves_alive)
 
         for _ in range(Params.min_herd_num - len(self.agent_groups[Herd.kind])):
             herd_pos = random.choice(self.groups_positions)
