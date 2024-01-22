@@ -130,10 +130,17 @@ class Pack(AgentGroup):
                 self.nearest_herd = self.previous_herd
                 self.path = self.path_finder.find_path((self.x, self.y), (self.previous_herd.x, self.previous_herd.y))
             else:
-                # print(f'no deer to hunt on, pack {self.id} is going back to the safe spot')
-                self.path = self.path_finder.find_path((self.x, self.y), self.safe_spot)
-                self.move(self.path[0][0] - self.x, self.path[0][1] - self.y)
-                self.move_wolves()
+                if len(self.path) > 0:
+                # print(f'pack {self.id} is moving to safe spot')
+                    self.move(self.path[0][0] - self.x, self.path[0][1] - self.y)
+                    self.path.pop(0)
+                    self.move_wolves()
+                    self.move_pack_randomly()
+                else:
+                    # print(f'no deer to hunt on, pack {self.id} is going back to the safe spot')
+                    self.path = self.path_finder.find_path((self.x, self.y), self.safe_spot)
+                    self.move(self.path[0][0] - self.x, self.path[0][1] - self.y)
+                    self.move_wolves()
                 return
 
         # we have a path to nearest herd
@@ -154,11 +161,11 @@ class Pack(AgentGroup):
                     self.nearest_herd = None
 
                 # # check if the wolves are on their territory - if not check if another pack is following the prey - if there is one, the pack should give up on hunting
-                # if self.sim.grid[self.x][self.y].scent_pack != self.id and len([pack for pack in self.sim.agent_groups[self.kind] if pack.nearest_herd == self.nearest_herd]) > 1:
+                if self.sim.grid[self.x][self.y].scent_pack != self.id and len([pack for pack in self.sim.agent_groups[self.kind] if pack.nearest_herd == self.nearest_herd]) > 1:
                 # #     # print(f'pack {self.id} is giving up on hunting, another herd is hunting the same prey')
-                #     self.nearest_herd = None
-                #     self.previous_herd = None
-                #     break
+                    self.nearest_herd = None
+                    self.previous_herd = None
+                    break
 
                 self.path.pop(0)
                 self.move_wolves()
